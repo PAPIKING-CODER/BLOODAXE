@@ -1,40 +1,189 @@
-local ui_options = {
-	main_color = Color3.fromRGB(41, 74, 122),
-	min_size = Vector2.new(400, 300),
-	toggle_key = Enum.KeyCode.RightShift,
-	can_resize = true,
-}
+--// X UI LIBRARY (Core) //--
+--// Made for Roblox Lua //--
 
-do
-	local imgui = game:GetService("CoreGui"):FindFirstChild("imgui")
-	if imgui then imgui:Destroy() end
+local XUI = {}
+XUI.__index = XUI
+
+local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+
+--// Utils
+local function Tween(obj, time, props)
+    TweenService:Create(obj, TweenInfo.new(time, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), props):Play()
 end
 
-local imgui = Instance.new("ScreenGui")
-local prefabs = Instance.new("Frame")
-local label = Instance.new("TextLabel")
-local window = Instance.new("ImageLabel")
-local resizer = Instance.new("Frame")
-local bar = Instance.new("Frame")
-local toggle = Instance.new("ImageButton")
-local base = Instance.new("ImageLabel")
-local top = Instance.new("ImageLabel")
-local tabs = Instance.new("Frame")
-local titleLabel = Instance.new("TextLabel")
-local tabSelection = Instance.new("ImageLabel")
-local tabButtons = Instance.new("Frame")
-local uiListLayout = Instance.new("UIListLayout")
-local frame = Instance.new("Frame")
-local tab = Instance.new("Frame")
-local uiListLayout2 = Instance.new("UIListLayout")
-local textBox = Instance.new("TextBox")
-local textBoxRoundify4px = Instance.new("ImageLabel")
-local slider = Instance.new("ImageLabel")
-local sliderTitle = Instance.new("TextLabel")
-local indicator = Instance.new("ImageLabel")
-local sliderValue = Instance.new("TextLabel")
-local textLabel = Instance.new("TextLabel")
-local textLabel2 = Instance.new("TextLabel")
+--// Create Window
+function XUI:CreateWindow(title)
+    local gui = Instance.new("ScreenGui")
+    gui.Name = "XUI"
+    gui.ResetOnSpawn = false
+    gui.Parent = game.CoreGui
+
+    local main = Instance.new("Frame")
+    main.Size = UDim2.new(0, 520, 0, 350)
+    main.Position = UDim2.new(0.5, -260, 0.5, -175)
+    main.BackgroundColor3 = Color3.fromRGB(18,18,18)
+    main.Parent = gui
+
+    local corner = Instance.new("UICorner", main)
+    corner.CornerRadius = UDim.new(0, 10)
+
+    local top = Instance.new("Frame")
+    top.Size = UDim2.new(1,0,0,40)
+    top.BackgroundColor3 = Color3.fromRGB(25,25,25)
+    top.Parent = main
+
+    local topCorner = Instance.new("UICorner", top)
+    topCorner.CornerRadius = UDim.new(0,10)
+
+    local titleLabel = Instance.new("TextLabel")
+    titleLabel.Size = UDim2.new(1,0,1,0)
+    titleLabel.BackgroundTransparency = 1
+    titleLabel.Text = title or "X UI"
+    titleLabel.TextColor3 = Color3.fromRGB(255,255,255)
+    titleLabel.Font = Enum.Font.GothamBold
+    titleLabel.TextSize = 14
+    titleLabel.Parent = top
+
+    local tabHolder = Instance.new("Frame")
+    tabHolder.Size = UDim2.new(1,0,1,-40)
+    tabHolder.Position = UDim2.new(0,0,0,40)
+    tabHolder.BackgroundTransparency = 1
+    tabHolder.Parent = main
+
+    local tabs = {}
+
+    local lib = {}
+
+    --// Create Tab
+    function lib:CreateTab(name)
+        local tabButton = Instance.new("TextButton")
+        tabButton.Size = UDim2.new(0,100,0,30)
+        tabButton.BackgroundColor3 = Color3.fromRGB(30,30,30)
+        tabButton.Text = name
+        tabButton.TextColor3 = Color3.fromRGB(255,255,255)
+        tabButton.Font = Enum.Font.Gotham
+        tabButton.TextSize = 12
+        tabButton.Parent = top
+
+        local tabCorner = Instance.new("UICorner", tabButton)
+        tabCorner.CornerRadius = UDim.new(0,6)
+
+        local page = Instance.new("Frame")
+        page.Size = UDim2.new(1,0,1,0)
+        page.BackgroundTransparency = 1
+        page.Visible = false
+        page.Parent = tabHolder
+
+        tabs[name] = page
+
+        tabButton.MouseButton1Click:Connect(function()
+            for _,v in pairs(tabs) do
+                v.Visible = false
+            end
+            page.Visible = true
+        end)
+
+        local tabAPI = {}
+
+        --// Button
+        function tabAPI:Button(text, callback)
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0,200,0,35)
+            btn.BackgroundColor3 = Color3.fromRGB(35,35,35)
+            btn.Text = text
+            btn.TextColor3 = Color3.fromRGB(255,255,255)
+            btn.Parent = page
+
+            Instance.new("UICorner", btn).CornerRadius = UDim.new(0,6)
+
+            btn.MouseButton1Click:Connect(function()
+                Tween(btn, 0.1, {BackgroundColor3 = Color3.fromRGB(60,60,60)})
+                task.wait(0.1)
+                Tween(btn, 0.1, {BackgroundColor3 = Color3.fromRGB(35,35,35)})
+                pcall(callback)
+            end)
+        end
+
+        --// Toggle
+        function tabAPI:Toggle(text, callback)
+            local state = false
+
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(0,200,0,35)
+            btn.BackgroundColor3 = Color3.fromRGB(35,35,35)
+            btn.Text = text.." : OFF"
+            btn.TextColor3 = Color3.fromRGB(255,255,255)
+            btn.Parent = page
+
+            Instance.new("UICorner", btn).CornerRadius = UDim.new(0,6)
+
+            btn.MouseButton1Click:Connect(function()
+                state = not state
+                btn.Text = text.." : "..(state and "ON" or "OFF")
+                Tween(btn,0.15,{
+                    BackgroundColor3 = state and Color3.fromRGB(40,120,40) or Color3.fromRGB(35,35,35)
+                })
+                pcall(callback, state)
+            end)
+        end
+
+        --// Dropdown (simple)
+        function tabAPI:Dropdown(text, list, callback)
+            local open = false
+
+            local holder = Instance.new("Frame")
+            holder.Size = UDim2.new(0,200,0,35)
+            holder.BackgroundColor3 = Color3.fromRGB(35,35,35)
+            holder.Parent = page
+            Instance.new("UICorner", holder).CornerRadius = UDim.new(0,6)
+
+            local btn = Instance.new("TextButton")
+            btn.Size = UDim2.new(1,0,1,0)
+            btn.BackgroundTransparency = 1
+            btn.Text = text
+            btn.TextColor3 = Color3.fromRGB(255,255,255)
+            btn.Parent = holder
+
+            local listFrame = Instance.new("Frame")
+            listFrame.Size = UDim2.new(1,0,0,0)
+            listFrame.Position = UDim2.new(0,0,1,0)
+            listFrame.BackgroundColor3 = Color3.fromRGB(25,25,25)
+            listFrame.ClipsDescendants = true
+            listFrame.Parent = holder
+            Instance.new("UICorner", listFrame).CornerRadius = UDim.new(0,6)
+
+            btn.MouseButton1Click:Connect(function()
+                open = not open
+                Tween(listFrame,0.2,{Size = open and UDim2.new(1,0,0,#list*30) or UDim2.new(1,0,0,0)})
+            end)
+
+            for i,v in ipairs(list) do
+                local opt = Instance.new("TextButton")
+                opt.Size = UDim2.new(1,0,0,30)
+                opt.BackgroundTransparency = 1
+                opt.Text = v
+                opt.TextColor3 = Color3.fromRGB(200,200,200)
+                opt.Parent = listFrame
+
+                opt.MouseButton1Click:Connect(function()
+                    btn.Text = v
+                    open = false
+                    Tween(listFrame,0.2,{Size = UDim2.new(1,0,0,0)})
+                    pcall(callback, v)
+                end)
+            end
+        end
+
+        tabs[name] = page
+        return tabAPI
+    end
+
+    return lib
+end
+
+return XUIlocal textLabel2 = Instance.new("TextLabel")
 local circle = Instance.new("ImageLabel")
 local uiListLayout3 = Instance.new("UIListLayout")
 local dropdown = Instance.new("TextButton")
