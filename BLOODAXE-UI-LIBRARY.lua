@@ -1,9 +1,3 @@
---[[
-  Librería REDZ modificada por solicitud
-  - Icono de botones = 136418082370751
-  - Pestañas sin icono usan 136418082370751 por defecto
-  - Nuevo parámetro "Logo" en MakeWindow para mostrar imagen en la barra superior
---]]
 local a=cloneref or(function(...)return...end)
 
 local b=delfolder or deletefolder
