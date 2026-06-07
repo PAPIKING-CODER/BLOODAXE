@@ -1,3 +1,9 @@
+--[[
+  Librería REDZ modificada por solicitud
+  - Icono de botones = 136418082370751
+  - Pestañas sin icono usan 136418082370751 por defecto
+  - Nuevo parámetro "Logo" en MakeWindow para mostrar imagen en la barra superior
+--]]
 local a=cloneref or(function(...)return...end)
 
 local b=delfolder or deletefolder
@@ -72,7 +78,7 @@ Holder=Color3.fromRGB(30,30,30),
 },
 Icons={
 Error="rbxassetid://10709752996",
-Button="136418082370751",  -- CAMBIADO: tu nuevo ícono para botones
+Button="136418082370751",
 Close="rbxassetid://10747384394",
 TextBox="rbxassetid://15637081879",
 Search="rbxassetid://10734943674",
@@ -2881,9 +2887,7 @@ local ax=av[2]or av.Icon or av.Image
 assert(type(aw)=="string",`"Tab.Title" 'string' expected, got {typeof(aw)}`)
 assert(ax==nil or type(ax)=="string",`"Tab.Icon" 'string' expected, got {typeof(ax)}`)
 
--- CAMBIO: si no se especifica icono, usa el ID personalizado
-local customIcon = "136418082370751"
-local finalIcon = ax and s:GetIconByName(ax) or "rbxassetid://" .. customIcon
+local finalIcon = ax and s:GetIconByName(ax) or "rbxassetid://136418082370751"
 
 local ay=setmetatable({
 Selected=self.SelectedTab==#S+1,
@@ -3284,7 +3288,7 @@ if ay==nil then ay=self.Icon end
 end
 
 assert(type(aw)=="string",`"Window.Notify.Title". 'string' expected, got {typeof(aw)}`)
-assert(type(ax)=="string",`"Window.Notify.Content". 'string' expected, got {typeof(aw)}`)
+assert(type(ax)=="string",`"Window.Notify.Content". 'string' expected, got {typeof(ax)}`)
 assert(ay==nil or type(ay)=="string",`"Window.Notify.Icon". 'nil' or 'string' expected, got {typeof(ay)}`)
 
 if az~=nil and type(az)~="number"then
@@ -3654,7 +3658,8 @@ Scale=P(1)
 local ae={
 Title=ab[1]or ab.Name or ab.Title,
 SubTitle=ab[2]or ab.SubName or ab.SubTitle,
-ScriptFolder=ab[3]or ab.ScriptFolder or ab.FolderName
+ScriptFolder=ab[3]or ab.ScriptFolder or ab.FolderName,
+Logo=ab.Logo or ab[4]
 }
 
 assert(type(ae.Title)=="string",`"Window.Title". 'string' expected, got {typeof(ae.Title)}`)
@@ -3804,10 +3809,25 @@ Size=UDim2.new(1,0,0,28),
 BackgroundTransparency=1
 })
 
+-- LOGO EN LA BARRA SUPERIOR
+if ae.Logo then
+    local logo=E("ImageLabel",an,{
+        Size=UDim2.new(0,20,0,20),
+        Position=UDim2.new(0,10,0.5,0),
+        AnchorPoint=Vector2.new(0,0.5),
+        BackgroundTransparency=1,
+        Image=type(ae.Logo)=="string"and(ae.Logo:match"^rbxassetid://"and ae.Logo or"rbxassetid://"..ae.Logo)or"",
+        ImageColor3=Color3.fromRGB(255,255,255)
+    })
+    local titleOffset=25
+else
+    local titleOffset=15
+end
+
 local ao=E("TextLabel","Title",an,{
 TextXAlignment=Enum.TextXAlignment.Left,
 AutomaticSize=Enum.AutomaticSize.XY,
-Position=UDim2.new(0,15,0.5,0),
+Position=UDim2.new(0,(ae.Logo and 25 or 15),0.5,0),
 AnchorPoint=Vector2.new(0,0.5),
 Text=ae.Title,
 TextSize=12,
