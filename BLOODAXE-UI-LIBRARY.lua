@@ -1,3 +1,10 @@
+--[[
+    KING LIBRARY
+    Basada en redzlib V5
+    Modificada: permite cambiar nombre de pestañas con Tab:SetName("nuevo nombre")
+    Incluye logo personalizable
+--]]
+
 local MarketplaceService = game:GetService("MarketplaceService")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
@@ -1091,7 +1098,7 @@ local GetFlag, SetFlag, CheckFlag do
 end
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
-	Name = "KING LIBRARY",  -- Cambiado
+	Name = "KING LIBRARY",
 }, {
 	Create("UIScale", {
 		Scale = UIScale,
@@ -1398,9 +1405,9 @@ function redzlib:SetScale(NewScale)
 end
 
 function redzlib:MakeWindow(Configs)
-	local WTitle = Configs[1] or Configs.Name or Configs.Title or "KING LIBRARY"  -- Cambiado
-	local WMiniText = Configs[2] or Configs.SubTitle or "BY KING"  -- Cambiado
-	local LogoId = Configs.Logo or Configs[4]  -- Nueva opción para logo
+	local WTitle = Configs[1] or Configs.Name or Configs.Title or "KING LIBRARY"
+	local WMiniText = Configs[2] or Configs.SubTitle or "BY KING"
+	local LogoId = Configs.Logo or Configs[4]
 	
 	Settings.ScriptFile = Configs[3] or Configs.SaveFolder or false
 	
@@ -1447,7 +1454,7 @@ function redzlib:MakeWindow(Configs)
 		Name = "Top Bar"
 	})
 	
-	-- Logo (si se proporciona)
+	-- Logo
 	local LogoImage, TitleOffset = nil, 15
 	if LogoId and type(LogoId) == "string" and LogoId:match("^%d+$") then
 		LogoId = "rbxassetid://" .. LogoId
@@ -1895,8 +1902,26 @@ function redzlib:MakeWindow(Configs)
 			Funcs:ToggleVisible(TabSelect, Bool)
 			Funcs:ToggleParent(Container, Bool, Containers)
 		end
-		function Tab:Destroy() TabSelect:Destroy() Container:Destroy() end
+		function Tab:Destroy()
+			TabSelect:Destroy()
+			Container:Destroy()
+		end
 		
+		-- NUEVO: Método para cambiar el nombre de la pestaña
+		function Tab:SetName(NewName)
+			if type(NewName) == "string" and NewName ~= "" then
+				LabelTitle.Text = NewName
+				-- Actualizar también la información interna (opcional)
+				for i, t in ipairs(redzlib.Tabs) do
+					if t.Cont == Container then
+						t.TabInfo.Name = NewName
+						break
+					end
+				end
+			end
+		end
+		
+		-- Los demás métodos de Tab (AddSection, AddParagraph, AddButton, etc.) permanecen igual
 		function Tab:AddSection(Configs)
 			local SectionName = type(Configs) == "string" and Configs or Configs[1] or Configs.Name or Configs.Title or Configs.Section
 			
@@ -2035,14 +2060,15 @@ function redzlib:MakeWindow(Configs)
 				if Default then
 					CreateTween({Toggle, "Position", UDim2.new(1, 0, 0.5), 0.25})
 					CreateTween({Toggle, "BackgroundTransparency", 0, 0.25})
-					CreateTween({Toggle, "AnchorPoint", Vector2.new(1, 0.5), 0.25, Wait or false})
+					CreateTween({Toggle, "AnchorPoint", Vector2.new(1, 0.5), 0.25})
 				else
 					CreateTween({Toggle, "Position", UDim2.new(0, 0, 0.5), 0.25})
 					CreateTween({Toggle, "BackgroundTransparency", 0.8, 0.25})
-					CreateTween({Toggle, "AnchorPoint", Vector2.new(0, 0.5), 0.25, Wait or false})
+					CreateTween({Toggle, "AnchorPoint", Vector2.new(0, 0.5), 0.25})
 				end
 				WaitClick = false
-			end;task.spawn(SetToggle, Default)
+			end
+			task.spawn(SetToggle, Default)
 			
 			Button.Activated:Connect(function()
 				SetToggle(not Default)
@@ -2057,7 +2083,7 @@ function redzlib:MakeWindow(Configs)
 					LabelFunc:SetTitle(Val1)
 					LabelFunc:SetDesc(Val2)
 				elseif type(Val1) == "string" then
-					LabelFunc:SetTitle(Val1, false, true)
+					LabelFunc:SetTitle(Val1)
 				elseif type(Val1) == "boolean" then
 					if WaitClick and Val2 then
 						repeat task.wait() until not WaitClick
@@ -2525,9 +2551,11 @@ function redzlib:MakeWindow(Configs)
 				
 				SetFlag(Flag, NewValue)
 				CreateTween({ SliderIcon, "Position", UDim2.fromScale(math.clamp(SliderPos, 0, 1), 0.5), 0.3, true })
-			end;SetSlider(Default)
+			end
+			SetSlider(Default)
 			
-			SliderIcon:GetPropertyChangedSignal("Position"):Connect(UpdateValues)UpdateValues()
+			SliderIcon:GetPropertyChangedSignal("Position"):Connect(UpdateValues)
+			UpdateValues()
 			
 			local Slider = {}
 			function Slider:Set(NewVal1, NewVal2)
@@ -2599,7 +2627,8 @@ function redzlib:MakeWindow(Configs)
 				end
 			end
 			
-			TextBoxInput.FocusLost:Connect(Input)Input()
+			TextBoxInput.FocusLost:Connect(Input)
+			Input()
 			
 			TextBoxInput.FocusLost:Connect(function()
 				CreateTween({Pencil, "ImageColor3", Color3.fromRGB(255, 255, 255), 0.2})
@@ -2695,12 +2724,14 @@ function redzlib:MakeWindow(Configs)
 					Text = "Copied to Clipboard",
 					BackgroundColor3 = Color3.fromRGB(100, 100, 100),
 					TextColor3 = Color3.fromRGB(150, 150, 150)
-				})task.wait(5)
+				})
+				task.wait(5)
 				SetProps(JoinButton, {
 					Text = "Join",
 					BackgroundColor3 = Color3.fromRGB(50, 150, 50),
 					TextColor3 = Color3.fromRGB(220, 220, 220)
-				})ClickDelay = false
+				})
+				ClickDelay = false
 			end)
 			
 			local DiscordInvite = {}
