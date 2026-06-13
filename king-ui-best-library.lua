@@ -1,11 +1,10 @@
 local KODBloodUILibrary = {}
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local CoreGui = game:GetService("CoreGui")
 local HttpService = game:GetService("HttpService")
 local Lighting = game:GetService("Lighting")
-local CoreGui = game:GetService("CoreGui")
 local LocalPlayer = Players.LocalPlayer
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "KODBloodUI"
@@ -14,57 +13,61 @@ ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 local LibraryConfig = {
     Name = "KOD Blood Hub",
-    Description = "Premium UI Library",
+    Subtitle = "Premium UI Library",
     Logo = "rbxassetid://7733986644",
     Icon = "rbxassetid://7733986644",
     Creator = "KING999",
     Version = "2.0",
     Theme = "Blood",
-    Discord = "",
     Transparency = 0.05,
     Blur = false,
     CornerRadius = 12,
     StrokeThickness = 1.5,
-    Animation = "Slide",
+    AnimationSpeed = 0.25,
     MobileMode = UserInputService.TouchEnabled
 }
 local Themes = {
     Blood = {
-        ["Color Hub 1"] = Color3.fromRGB(10,10,10),
-        ["Color Hub 2"] = Color3.fromRGB(18,18,18),
-        ["Color Stroke"] = Color3.fromRGB(120,0,0),
-        ["Color Theme"] = Color3.fromRGB(200,0,0),
-        ["Color Text"] = Color3.fromRGB(255,255,255),
-        ["Color Dark Text"] = Color3.fromRGB(170,170,170),
-        ["Color Button Hover"] = Color3.fromRGB(150,0,0),
-        ["Color Toggle Off"] = Color3.fromRGB(40,40,40),
-        ["Color Toggle On"] = Color3.fromRGB(200,0,0),
-        ["Color Slider Track"] = Color3.fromRGB(30,30,30),
-        ["Color Slider Fill"] = Color3.fromRGB(200,0,0),
-        ["Color Dropdown"] = Color3.fromRGB(20,20,20),
-        ["Color Shadow"] = Color3.fromRGB(0,0,0),
-        ["Color Notification"] = Color3.fromRGB(25,0,0)
+        Background = Color3.fromRGB(8, 8, 8),
+        Panel = Color3.fromRGB(18, 18, 18),
+        Secondary = Color3.fromRGB(25, 25, 25),
+        Stroke = Color3.fromRGB(120, 0, 0),
+        Accent = Color3.fromRGB(200, 0, 0),
+        BrightAccent = Color3.fromRGB(255, 0, 0),
+        Text = Color3.fromRGB(255, 255, 255),
+        DarkText = Color3.fromRGB(170, 170, 170),
+        ToggleOff = Color3.fromRGB(40, 40, 40),
+        ToggleOn = Color3.fromRGB(200, 0, 0),
+        SliderTrack = Color3.fromRGB(30, 30, 30),
+        SliderFill = Color3.fromRGB(200, 0, 0),
+        Dropdown = Color3.fromRGB(20, 20, 20),
+        Shadow = Color3.fromRGB(0, 0, 0),
+        Notification = Color3.fromRGB(25, 0, 0),
+        TabSelected = Color3.fromRGB(180, 0, 0),
+        TabHover = Color3.fromRGB(100, 0, 0)
     },
     Dark = {
-        ["Color Hub 1"] = Color3.fromRGB(15,15,15),
-        ["Color Hub 2"] = Color3.fromRGB(25,25,25),
-        ["Color Stroke"] = Color3.fromRGB(80,80,80),
-        ["Color Theme"] = Color3.fromRGB(50,50,50),
-        ["Color Text"] = Color3.fromRGB(255,255,255),
-        ["Color Dark Text"] = Color3.fromRGB(180,180,180),
-        ["Color Button Hover"] = Color3.fromRGB(60,60,60),
-        ["Color Toggle Off"] = Color3.fromRGB(40,40,40),
-        ["Color Toggle On"] = Color3.fromRGB(70,70,70),
-        ["Color Slider Track"] = Color3.fromRGB(30,30,30),
-        ["Color Slider Fill"] = Color3.fromRGB(80,80,80),
-        ["Color Dropdown"] = Color3.fromRGB(20,20,20),
-        ["Color Shadow"] = Color3.fromRGB(0,0,0),
-        ["Color Notification"] = Color3.fromRGB(20,20,20)
+        Background = Color3.fromRGB(15, 15, 15),
+        Panel = Color3.fromRGB(25, 25, 25),
+        Secondary = Color3.fromRGB(35, 35, 35),
+        Stroke = Color3.fromRGB(80, 80, 80),
+        Accent = Color3.fromRGB(50, 50, 50),
+        BrightAccent = Color3.fromRGB(100, 100, 100),
+        Text = Color3.fromRGB(255, 255, 255),
+        DarkText = Color3.fromRGB(180, 180, 180),
+        ToggleOff = Color3.fromRGB(40, 40, 40),
+        ToggleOn = Color3.fromRGB(70, 70, 70),
+        SliderTrack = Color3.fromRGB(30, 30, 30),
+        SliderFill = Color3.fromRGB(80, 80, 80),
+        Dropdown = Color3.fromRGB(20, 20, 20),
+        Shadow = Color3.fromRGB(0, 0, 0),
+        Notification = Color3.fromRGB(20, 20, 20),
+        TabSelected = Color3.fromRGB(60, 60, 60),
+        TabHover = Color3.fromRGB(40, 40, 40)
     }
 }
 local CurrentTheme = LibraryConfig.Theme
 local DebugMode = false
-local CreatorMode = true
 local WindowInstances = {}
 local Notifications = {}
 local function GetThemeColor(key)
@@ -74,7 +77,7 @@ local function SetThemeColor(key, color)
     if Themes[CurrentTheme] then
         Themes[CurrentTheme][key] = color
         for _, win in pairs(WindowInstances) do
-            win:UpdateTheme()
+            if win.UpdateTheme then win:UpdateTheme() end
         end
     end
 end
@@ -86,7 +89,7 @@ local function CreateCorner(frame, radius)
 end
 local function CreateStroke(frame, color, thickness, transparency)
     local stroke = Instance.new("UIStroke")
-    stroke.Color = color or GetThemeColor("Color Stroke")
+    stroke.Color = color or GetThemeColor("Stroke")
     stroke.Thickness = thickness or LibraryConfig.StrokeThickness
     stroke.Transparency = transparency or 0.3
     stroke.Parent = frame
@@ -97,12 +100,12 @@ local function CreateGlow(frame, color, size)
     glow.Name = "Glow"
     glow.BackgroundTransparency = 1
     glow.Image = "rbxassetid://7734137438"
-    glow.ImageColor3 = color or GetThemeColor("Color Stroke")
-    glow.ImageTransparency = 0.6
+    glow.ImageColor3 = color or GetThemeColor("BrightAccent")
+    glow.ImageTransparency = 0.7
     glow.Size = UDim2.new(1, size or 30, 1, size or 30)
     glow.Position = UDim2.new(-0.5, -(size or 30)/2, -0.5, -(size or 30)/2)
     glow.ScaleType = Enum.ScaleType.Slice
-    glow.SliceCenter = Rect.new(100,100,100,100)
+    glow.SliceCenter = Rect.new(100, 100, 100, 100)
     glow.Parent = frame
     return glow
 end
@@ -111,12 +114,12 @@ local function CreateShadow(frame, size, transparency, color)
     shadow.Name = "Shadow"
     shadow.BackgroundTransparency = 1
     shadow.Image = "rbxassetid://6015897843"
-    shadow.ImageTransparency = transparency or 0.5
-    shadow.ImageColor3 = color or GetThemeColor("Color Shadow")
+    shadow.ImageTransparency = transparency or 0.4
+    shadow.ImageColor3 = color or GetThemeColor("Shadow")
     shadow.Size = UDim2.new(1, size or 20, 1, size or 20)
     shadow.Position = UDim2.new(-0.5, -(size or 20)/2, -0.5, -(size or 20)/2)
     shadow.ScaleType = Enum.ScaleType.Slice
-    shadow.SliceCenter = Rect.new(100,100,100,100)
+    shadow.SliceCenter = Rect.new(100, 100, 100, 100)
     shadow.Parent = frame
     return shadow
 end
@@ -125,53 +128,24 @@ local function CreateRipple(button, color)
     ripple.Name = "Ripple"
     ripple.BackgroundTransparency = 1
     ripple.Image = "rbxassetid://7733813662"
-    ripple.ImageColor3 = color or GetThemeColor("Color Theme")
+    ripple.ImageColor3 = color or GetThemeColor("Accent")
     ripple.ImageTransparency = 0.6
-    ripple.Size = UDim2.new(0,0,0,0)
-    ripple.Position = UDim2.new(0.5,0,0.5,0)
+    ripple.Size = UDim2.new(0, 0, 0, 0)
+    ripple.Position = UDim2.new(0.5, 0, 0.5, 0)
     ripple.ZIndex = 10
     ripple.Parent = button
-    local tween = TweenService:Create(ripple, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(3,0,3,0), ImageTransparency = 1})
+    local tween = TweenService:Create(ripple, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(3, 0, 3, 0), ImageTransparency = 1})
     tween:Play()
     tween.Completed:Connect(function()
         ripple:Destroy()
     end)
-end
-local function CreateBlur(frame, size)
-    local blur = Instance.new("BlurEffect")
-    blur.Size = size or 16
-    blur.Parent = frame or Lighting
-    return blur
-end
-function KODBloodUILibrary.SetConfig(config)
-    for k,v in pairs(config) do
-        LibraryConfig[k] = v
-    end
-    if config.Theme then
-        CurrentTheme = config.Theme
-    end
-end
-function KODBloodUILibrary.SetName(name)
-    LibraryConfig.Name = name
-end
-function KODBloodUILibrary.SetIcon(icon)
-    LibraryConfig.Icon = icon
-end
-function KODBloodUILibrary.SetCreator(creator)
-    LibraryConfig.Creator = creator
-end
-function KODBloodUILibrary.SetBrand(brand)
-    if brand.Title then LibraryConfig.Name = brand.Title end
-    if brand.Subtitle then LibraryConfig.Description = brand.Subtitle end
-    if brand.Logo then LibraryConfig.Logo = brand.Logo end
-    if brand.Discord then LibraryConfig.Discord = brand.Discord end
 end
 function KODBloodUILibrary.SetTheme(themeName)
     if Themes[themeName] then
         CurrentTheme = themeName
         LibraryConfig.Theme = themeName
         for _, win in pairs(WindowInstances) do
-            win:UpdateTheme()
+            if win.UpdateTheme then win:UpdateTheme() end
         end
         return true
     end
@@ -183,46 +157,31 @@ end
 function KODBloodUILibrary.SetTransparency(val)
     LibraryConfig.Transparency = val
     for _, win in pairs(WindowInstances) do
-        win:UpdateTheme()
-    end
-end
-function KODBloodUILibrary.SetBlur(val)
-    LibraryConfig.Blur = val
-    for _, win in pairs(WindowInstances) do
-        win:UpdateTheme()
+        if win.UpdateTheme then win:UpdateTheme() end
     end
 end
 function KODBloodUILibrary.SetCornerRadius(val)
     LibraryConfig.CornerRadius = val
     for _, win in pairs(WindowInstances) do
-        win:UpdateTheme()
+        if win.UpdateTheme then win:UpdateTheme() end
     end
-end
-function KODBloodUILibrary.SetStrokeThickness(val)
-    LibraryConfig.StrokeThickness = val
-    for _, win in pairs(WindowInstances) do
-        win:UpdateTheme()
-    end
-end
-function KODBloodUILibrary.SetAnimation(val)
-    LibraryConfig.Animation = val
 end
 function KODBloodUILibrary.Notify(data)
     local notifyFrame = Instance.new("Frame")
     notifyFrame.Size = UDim2.new(0, 320, 0, 80)
     notifyFrame.Position = UDim2.new(1.1, 0, 0.85, 0)
-    notifyFrame.BackgroundColor3 = GetThemeColor("Color Notification")
+    notifyFrame.BackgroundColor3 = GetThemeColor("Notification")
     notifyFrame.BackgroundTransparency = 0.1
     notifyFrame.BorderSizePixel = 0
     notifyFrame.Parent = ScreenGui
     CreateCorner(notifyFrame, 8)
-    CreateStroke(notifyFrame, GetThemeColor("Color Stroke"), 1, 0.2)
+    CreateStroke(notifyFrame, GetThemeColor("Stroke"), 1, 0.2)
     local titleLabel = Instance.new("TextLabel")
     titleLabel.Size = UDim2.new(1, -20, 0.35, 0)
     titleLabel.Position = UDim2.new(0, 10, 0, 5)
     titleLabel.BackgroundTransparency = 1
     titleLabel.Text = data.Title or "KOD"
-    titleLabel.TextColor3 = GetThemeColor("Color Theme")
+    titleLabel.TextColor3 = GetThemeColor("Accent")
     titleLabel.TextSize = 16
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -232,7 +191,7 @@ function KODBloodUILibrary.Notify(data)
     contentLabel.Position = UDim2.new(0, 10, 0.35, 0)
     contentLabel.BackgroundTransparency = 1
     contentLabel.Text = data.Content or ""
-    contentLabel.TextColor3 = GetThemeColor("Color Text")
+    contentLabel.TextColor3 = GetThemeColor("Text")
     contentLabel.TextSize = 13
     contentLabel.Font = Enum.Font.Gotham
     contentLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -252,92 +211,6 @@ function KODBloodUILibrary.Notify(data)
     table.insert(Notifications, notifyFrame)
     return notifyFrame
 end
-function KODBloodUILibrary.KeySystem(data)
-    local key = data.Key or "KOD"
-    local save = data.SaveKey or true
-    local callback = data.Callback or function() end
-    local savedKey = save and (readfile("KOD_Key.txt") or "") or ""
-    if savedKey == key then
-        if callback then callback(true) end
-        return true
-    end
-    local keyGui = Instance.new("ScreenGui")
-    keyGui.Name = "KODKeySystem"
-    keyGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-    local mainFrame = Instance.new("Frame")
-    mainFrame.Size = UDim2.new(0, 400, 0, 200)
-    mainFrame.Position = UDim2.new(0.5, -200, 0.5, -100)
-    mainFrame.BackgroundColor3 = GetThemeColor("Color Hub 2")
-    mainFrame.BackgroundTransparency = 0.1
-    mainFrame.BorderSizePixel = 0
-    mainFrame.Parent = keyGui
-    CreateCorner(mainFrame, 12)
-    CreateStroke(mainFrame, GetThemeColor("Color Stroke"), 1.5, 0.3)
-    CreateGlow(mainFrame, GetThemeColor("Color Stroke"), 30)
-    local title = Instance.new("TextLabel")
-    title.Size = UDim2.new(1, 0, 0.25, 0)
-    title.Position = UDim2.new(0, 0, 0, 10)
-    title.BackgroundTransparency = 1
-    title.Text = "Key System"
-    title.TextColor3 = GetThemeColor("Color Theme")
-    title.TextSize = 20
-    title.Font = Enum.Font.GothamBold
-    title.Parent = mainFrame
-    local box = Instance.new("TextBox")
-    box.Size = UDim2.new(0.8, 0, 0.2, 0)
-    box.Position = UDim2.new(0.1, 0, 0.3, 0)
-    box.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    box.BackgroundTransparency = 0.5
-    box.Text = ""
-    box.TextColor3 = GetThemeColor("Color Text")
-    box.TextSize = 14
-    box.Font = Enum.Font.Gotham
-    box.PlaceholderText = "Enter key..."
-    box.PlaceholderColor3 = GetThemeColor("Color Dark Text")
-    box.Parent = mainFrame
-    CreateCorner(box, 6)
-    local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0.4, 0, 0.2, 0)
-    btn.Position = UDim2.new(0.3, 0, 0.6, 0)
-    btn.BackgroundColor3 = GetThemeColor("Color Theme")
-    btn.BackgroundTransparency = 0.3
-    btn.Text = "Verify"
-    btn.TextColor3 = Color3.fromRGB(255,255,255)
-    btn.TextSize = 14
-    btn.Font = Enum.Font.GothamBold
-    btn.Parent = mainFrame
-    CreateCorner(btn, 6)
-    btn.MouseButton1Click:Connect(function()
-        if box.Text == key then
-            if save then writefile("KOD_Key.txt", key) end
-            keyGui:Destroy()
-            if callback then callback(true) end
-        else
-            KODBloodUILibrary.Notify({Title="KOD", Content="Invalid Key!", Duration=2})
-        end
-    end)
-    return false
-end
-function KODBloodUILibrary.ExportTheme()
-    return Themes[CurrentTheme]
-end
-function KODBloodUILibrary.ImportTheme(data)
-    if data and type(data) == "table" then
-        Themes[data.ThemeName or "Custom"] = data
-        if data.ColorTheme then
-            local r,g,b = data.ColorTheme:match("(%d+),(%d+),(%d+)")
-            if r then SetThemeColor("Color Theme", Color3.fromRGB(tonumber(r),tonumber(g),tonumber(b))) end
-        end
-        if data.Background then
-            local r,g,b = data.Background:match("(%d+),(%d+),(%d+)")
-            if r then SetThemeColor("Color Hub 1", Color3.fromRGB(tonumber(r),tonumber(g),tonumber(b))) end
-        end
-        if data.Stroke then
-            local r,g,b = data.Stroke:match("(%d+),(%d+),(%d+)")
-            if r then SetThemeColor("Color Stroke", Color3.fromRGB(tonumber(r),tonumber(g),tonumber(b))) end
-        end
-    end
-end
 local function CreateWindow(data)
     local self = {}
     local windowSize = data.Size or Vector2.new(700, 500)
@@ -346,8 +219,6 @@ local function CreateWindow(data)
     local windowTitle = data.Name or LibraryConfig.Name
     local windowIcon = data.Icon or LibraryConfig.Icon
     local toggleKey = data.ToggleKey or Enum.KeyCode.RightShift
-    local loadingTitle = data.LoadingTitle or "KOD Blood UI"
-    local loadingSubtitle = data.LoadingSubtitle or "by " .. LibraryConfig.Creator
     if data.Theme then
         CurrentTheme = data.Theme
         LibraryConfig.Theme = data.Theme
@@ -355,103 +226,85 @@ local function CreateWindow(data)
     local windowFrame = Instance.new("Frame")
     windowFrame.Size = UDim2.new(0, windowSize.X, 0, windowSize.Y)
     windowFrame.Position = UDim2.new(0.5, -windowSize.X/2, 0.5, -windowSize.Y/2)
-    windowFrame.BackgroundColor3 = GetThemeColor("Color Hub 2")
+    windowFrame.BackgroundColor3 = GetThemeColor("Background")
     windowFrame.BackgroundTransparency = LibraryConfig.Transparency
     windowFrame.BorderSizePixel = 0
     windowFrame.Parent = ScreenGui
     windowFrame.Visible = true
     CreateCorner(windowFrame, LibraryConfig.CornerRadius)
-    CreateStroke(windowFrame, GetThemeColor("Color Stroke"), LibraryConfig.StrokeThickness, 0.2)
-    CreateGlow(windowFrame, GetThemeColor("Color Stroke"), 40)
-    if LibraryConfig.Blur then
-        local blurEffect = Instance.new("BlurEffect")
-        blurEffect.Size = 16
-        blurEffect.Parent = windowFrame
-    end
-    CreateShadow(windowFrame, 20, 0.4, GetThemeColor("Color Shadow"))
-    local titleBar = Instance.new("Frame")
-    titleBar.Size = UDim2.new(1, 0, 0, 50)
-    titleBar.Position = UDim2.new(0, 0, 0, 0)
-    titleBar.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    titleBar.BackgroundTransparency = 0.3
-    titleBar.BorderSizePixel = 0
-    titleBar.Parent = windowFrame
-    CreateCorner(titleBar, LibraryConfig.CornerRadius)
-    local iconImage = Instance.new("ImageLabel")
-    iconImage.Size = UDim2.new(0, 32, 0, 32)
-    iconImage.Position = UDim2.new(0, 12, 0.5, -16)
-    iconImage.BackgroundTransparency = 1
-    iconImage.Image = windowIcon
-    iconImage.ImageColor3 = GetThemeColor("Color Theme")
-    iconImage.Parent = titleBar
+    CreateStroke(windowFrame, GetThemeColor("Stroke"), LibraryConfig.StrokeThickness, 0.2)
+    CreateGlow(windowFrame, GetThemeColor("BrightAccent"), 40)
+    CreateShadow(windowFrame, 20, 0.4, GetThemeColor("Shadow"))
+    local headerFrame = Instance.new("Frame")
+    headerFrame.Size = UDim2.new(1, 0, 0, 60)
+    headerFrame.Position = UDim2.new(0, 0, 0, 0)
+    headerFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    headerFrame.BackgroundTransparency = 0.4
+    headerFrame.BorderSizePixel = 0
+    headerFrame.Parent = windowFrame
+    CreateCorner(headerFrame, LibraryConfig.CornerRadius)
+    local logoImage = Instance.new("ImageLabel")
+    logoImage.Size = UDim2.new(0, 40, 0, 40)
+    logoImage.Position = UDim2.new(0, 15, 0.5, -20)
+    logoImage.BackgroundTransparency = 1
+    logoImage.Image = windowIcon
+    logoImage.ImageColor3 = GetThemeColor("Accent")
+    logoImage.Parent = headerFrame
     local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(0, 200, 0, 30)
-    titleLabel.Position = UDim2.new(0, 50, 0, 5)
+    titleLabel.Size = UDim2.new(0, 220, 0, 30)
+    titleLabel.Position = UDim2.new(0, 65, 0, 5)
     titleLabel.BackgroundTransparency = 1
     titleLabel.Text = windowTitle
-    titleLabel.TextColor3 = GetThemeColor("Color Text")
-    titleLabel.TextSize = 18
+    titleLabel.TextColor3 = GetThemeColor("Text")
+    titleLabel.TextSize = 20
     titleLabel.Font = Enum.Font.GothamBold
     titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.Parent = titleBar
+    titleLabel.Parent = headerFrame
     local subtitleLabel = Instance.new("TextLabel")
-    subtitleLabel.Size = UDim2.new(0, 120, 0, 20)
-    subtitleLabel.Position = UDim2.new(0, 50, 0, 28)
+    subtitleLabel.Size = UDim2.new(0, 150, 0, 20)
+    subtitleLabel.Position = UDim2.new(0, 65, 0, 30)
     subtitleLabel.BackgroundTransparency = 1
-    subtitleLabel.Text = LibraryConfig.Description
-    subtitleLabel.TextColor3 = GetThemeColor("Color Dark Text")
+    subtitleLabel.Text = LibraryConfig.Subtitle
+    subtitleLabel.TextColor3 = GetThemeColor("DarkText")
     subtitleLabel.TextSize = 12
     subtitleLabel.Font = Enum.Font.Gotham
     subtitleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    subtitleLabel.Parent = titleBar
+    subtitleLabel.Parent = headerFrame
     local minimizeBtn = Instance.new("TextButton")
     minimizeBtn.Size = UDim2.new(0, 30, 0, 30)
-    minimizeBtn.Position = UDim2.new(1, -90, 0, 10)
+    minimizeBtn.Position = UDim2.new(1, -90, 0, 15)
     minimizeBtn.BackgroundTransparency = 1
     minimizeBtn.Text = "-"
-    minimizeBtn.TextColor3 = Color3.fromRGB(200,200,200)
+    minimizeBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
     minimizeBtn.TextSize = 18
     minimizeBtn.Font = Enum.Font.GothamBold
-    minimizeBtn.Parent = titleBar
+    minimizeBtn.Parent = headerFrame
     local closeBtn = Instance.new("TextButton")
     closeBtn.Size = UDim2.new(0, 30, 0, 30)
-    closeBtn.Position = UDim2.new(1, -50, 0, 10)
+    closeBtn.Position = UDim2.new(1, -50, 0, 15)
     closeBtn.BackgroundTransparency = 1
     closeBtn.Text = "X"
-    closeBtn.TextColor3 = Color3.fromRGB(255,80,80)
+    closeBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
     closeBtn.TextSize = 18
     closeBtn.Font = Enum.Font.GothamBold
-    closeBtn.Parent = titleBar
-    if CreatorMode then
-        local footer = Instance.new("TextLabel")
-        footer.Size = UDim2.new(1, 0, 0, 16)
-        footer.Position = UDim2.new(0, 0, 1, -16)
-        footer.BackgroundColor3 = Color3.fromRGB(0,0,0)
-        footer.BackgroundTransparency = 0.5
-        footer.Text = "Powered by KOD Blood UI"
-        footer.TextColor3 = GetThemeColor("Color Dark Text")
-        footer.TextSize = 10
-        footer.Font = Enum.Font.Gotham
-        footer.Parent = windowFrame
-        CreateCorner(footer, LibraryConfig.CornerRadius)
-    end
+    closeBtn.Parent = headerFrame
     local sidebar = Instance.new("Frame")
-    sidebar.Size = UDim2.new(0, 160, 1, -50)
-    sidebar.Position = UDim2.new(0, 0, 0, 50)
-    sidebar.BackgroundColor3 = Color3.fromRGB(0,0,0)
-    sidebar.BackgroundTransparency = 0.4
+    sidebar.Size = UDim2.new(0, 180, 1, -60)
+    sidebar.Position = UDim2.new(0, 0, 0, 60)
+    sidebar.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+    sidebar.BackgroundTransparency = 0.5
     sidebar.BorderSizePixel = 0
     sidebar.Parent = windowFrame
     CreateCorner(sidebar, LibraryConfig.CornerRadius)
     local contentContainer = Instance.new("Frame")
-    contentContainer.Size = UDim2.new(1, -170, 1, -60)
-    contentContainer.Position = UDim2.new(0, 160, 0, 55)
+    contentContainer.Size = UDim2.new(1, -190, 1, -70)
+    contentContainer.Position = UDim2.new(0, 180, 0, 65)
     contentContainer.BackgroundTransparency = 1
     contentContainer.Parent = windowFrame
     local resizeHandle = Instance.new("Frame")
     resizeHandle.Size = UDim2.new(0, 12, 0, 12)
     resizeHandle.Position = UDim2.new(1, -12, 1, -12)
-    resizeHandle.BackgroundColor3 = GetThemeColor("Color Theme")
+    resizeHandle.BackgroundColor3 = GetThemeColor("Accent")
     resizeHandle.BackgroundTransparency = 0.3
     resizeHandle.Parent = windowFrame
     CreateCorner(resizeHandle, 3)
@@ -460,13 +313,13 @@ local function CreateWindow(data)
     local currentTab = nil
     local function AddTab(tabName, tabIcon)
         local tabBtn = Instance.new("TextButton")
-        tabBtn.Size = UDim2.new(1, -10, 0, 35)
-        tabBtn.Position = UDim2.new(0, 5, 0, #tabButtons * 40 + 5)
-        tabBtn.BackgroundColor3 = Color3.fromRGB(0,0,0)
+        tabBtn.Size = UDim2.new(1, -10, 0, 40)
+        tabBtn.Position = UDim2.new(0, 5, 0, #tabButtons * 45 + 5)
+        tabBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
         tabBtn.BackgroundTransparency = 0.8
         tabBtn.BorderSizePixel = 0
         tabBtn.Text = "  " .. tabName
-        tabBtn.TextColor3 = GetThemeColor("Color Dark Text")
+        tabBtn.TextColor3 = GetThemeColor("DarkText")
         tabBtn.TextSize = 14
         tabBtn.Font = Enum.Font.Gotham
         tabBtn.TextXAlignment = Enum.TextXAlignment.Left
@@ -474,17 +327,17 @@ local function CreateWindow(data)
         CreateCorner(tabBtn, 6)
         if tabIcon then
             local icon = Instance.new("ImageLabel")
-            icon.Size = UDim2.new(0, 16, 0, 16)
-            icon.Position = UDim2.new(0, 8, 0.5, -8)
+            icon.Size = UDim2.new(0, 18, 0, 18)
+            icon.Position = UDim2.new(0, 8, 0.5, -9)
             icon.BackgroundTransparency = 1
             icon.Image = tabIcon
-            icon.ImageColor3 = GetThemeColor("Color Dark Text")
+            icon.ImageColor3 = GetThemeColor("DarkText")
             icon.Parent = tabBtn
         end
         local tabIndicator = Instance.new("Frame")
         tabIndicator.Size = UDim2.new(0, 3, 0.6, 0)
         tabIndicator.Position = UDim2.new(0, 0, 0.2, 0)
-        tabIndicator.BackgroundColor3 = GetThemeColor("Color Theme")
+        tabIndicator.BackgroundColor3 = GetThemeColor("Accent")
         tabIndicator.BackgroundTransparency = 1
         tabIndicator.Parent = tabBtn
         CreateCorner(tabIndicator, 2)
@@ -494,13 +347,13 @@ local function CreateWindow(data)
         tabContent.BorderSizePixel = 0
         tabContent.CanvasSize = UDim2.new(0, 0, 0, 0)
         tabContent.ScrollBarThickness = 4
-        tabContent.ScrollBarImageColor3 = GetThemeColor("Color Theme")
+        tabContent.ScrollBarImageColor3 = GetThemeColor("Accent")
         tabContent.ScrollBarImageTransparency = 0.5
         tabContent.Visible = false
         tabContent.Parent = contentContainer
         local contentLayout = Instance.new("UIListLayout")
         contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-        contentLayout.Padding = UDim.new(0, 8)
+        contentLayout.Padding = UDim.new(0, 10)
         contentLayout.Parent = tabContent
         local contentPadding = Instance.new("UIPadding")
         contentPadding.PaddingLeft = UDim.new(0, 10)
@@ -512,7 +365,9 @@ local function CreateWindow(data)
             if currentTab then
                 local oldBtn = tabButtons[currentTab]
                 if oldBtn then
-                    oldBtn.TextColor3 = GetThemeColor("Color Dark Text")
+                    oldBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+                    oldBtn.BackgroundTransparency = 0.8
+                    oldBtn.TextColor3 = GetThemeColor("DarkText")
                     local oldInd = oldBtn:FindFirstChild("Indicator")
                     if oldInd then
                         TweenService:Create(oldInd, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 1}):Play()
@@ -525,7 +380,9 @@ local function CreateWindow(data)
             end
             currentTab = tabName
             local newBtn = tabBtn
-            newBtn.TextColor3 = GetThemeColor("Color Text")
+            newBtn.BackgroundColor3 = GetThemeColor("TabSelected")
+            newBtn.BackgroundTransparency = 0.3
+            newBtn.TextColor3 = GetThemeColor("Text")
             local newInd = newBtn:FindFirstChild("Indicator")
             if newInd then
                 TweenService:Create(newInd, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 0}):Play()
@@ -537,12 +394,12 @@ local function CreateWindow(data)
         tabBtn.MouseButton1Click:Connect(SelectTab)
         tabBtn.MouseEnter:Connect(function()
             if currentTab ~= tabName then
-                TweenService:Create(tabBtn, TweenInfo.new(0.2), {TextColor3 = GetThemeColor("Color Text")}):Play()
+                TweenService:Create(tabBtn, TweenInfo.new(0.2), {BackgroundColor3 = GetThemeColor("TabHover"), BackgroundTransparency = 0.5, TextColor3 = GetThemeColor("Text")}):Play()
             end
         end)
         tabBtn.MouseLeave:Connect(function()
             if currentTab ~= tabName then
-                TweenService:Create(tabBtn, TweenInfo.new(0.2), {TextColor3 = GetThemeColor("Color Dark Text")}):Play()
+                TweenService:Create(tabBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 0, 0), BackgroundTransparency = 0.8, TextColor3 = GetThemeColor("DarkText")}):Play()
             end
         end)
         table.insert(tabButtons, tabBtn)
@@ -553,41 +410,41 @@ local function CreateWindow(data)
         local tabAPI = {}
         function tabAPI:AddSection(sectionName)
             local sectionFrame = Instance.new("Frame")
-            sectionFrame.Size = UDim2.new(1, 0, 0, 30)
-            sectionFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            sectionFrame.BackgroundTransparency = 0.3
+            sectionFrame.Size = UDim2.new(1, 0, 0, 35)
+            sectionFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+            sectionFrame.BackgroundTransparency = 0.4
             sectionFrame.BorderSizePixel = 0
             sectionFrame.Parent = tabContent
-            CreateCorner(sectionFrame, 6)
+            CreateCorner(sectionFrame, 8)
             local sectionLabel = Instance.new("TextLabel")
             sectionLabel.Size = UDim2.new(1, -15, 1, 0)
             sectionLabel.Position = UDim2.new(0, 10, 0, 0)
             sectionLabel.BackgroundTransparency = 1
             sectionLabel.Text = sectionName
-            sectionLabel.TextColor3 = GetThemeColor("Color Theme")
-            sectionLabel.TextSize = 14
+            sectionLabel.TextColor3 = GetThemeColor("Accent")
+            sectionLabel.TextSize = 15
             sectionLabel.Font = Enum.Font.GothamBold
             sectionLabel.TextXAlignment = Enum.TextXAlignment.Left
             sectionLabel.Parent = sectionFrame
             return sectionFrame
         end
         function tabAPI:AddButton(btnData)
-            local name = btnData.Name or btnData.Text or "Button"
-            local callback = btnData.Callback or btnData.Function or function() end
+            local name = btnData.Name or "Button"
+            local callback = btnData.Callback or function() end
             local icon = btnData.Icon
             local btnFrame = Instance.new("Frame")
-            btnFrame.Size = UDim2.new(1, 0, 0, 35)
-            btnFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            btnFrame.BackgroundTransparency = 0.5
+            btnFrame.Size = UDim2.new(1, 0, 0, 40)
+            btnFrame.BackgroundColor3 = GetThemeColor("Panel")
+            btnFrame.BackgroundTransparency = 0.3
             btnFrame.BorderSizePixel = 0
             btnFrame.Parent = tabContent
-            CreateCorner(btnFrame, 6)
-            CreateStroke(btnFrame, GetThemeColor("Color Stroke"), 0.5, 0.5)
+            CreateCorner(btnFrame, 8)
+            CreateStroke(btnFrame, GetThemeColor("Stroke"), 0.5, 0.4)
             local btn = Instance.new("TextButton")
             btn.Size = UDim2.new(1, 0, 1, 0)
             btn.BackgroundTransparency = 1
             btn.Text = "  " .. name
-            btn.TextColor3 = GetThemeColor("Color Text")
+            btn.TextColor3 = GetThemeColor("Text")
             btn.TextSize = 14
             btn.Font = Enum.Font.Gotham
             btn.TextXAlignment = Enum.TextXAlignment.Left
@@ -595,23 +452,23 @@ local function CreateWindow(data)
             if icon then
                 local ico = Instance.new("ImageLabel")
                 ico.Size = UDim2.new(0, 20, 0, 20)
-                ico.Position = UDim2.new(1, -30, 0.5, -10)
+                ico.Position = UDim2.new(1, -35, 0.5, -10)
                 ico.BackgroundTransparency = 1
                 ico.Image = icon
-                ico.ImageColor3 = GetThemeColor("Color Dark Text")
+                ico.ImageColor3 = GetThemeColor("DarkText")
                 ico.Parent = btnFrame
             end
             btn.MouseButton1Click:Connect(function()
-                CreateRipple(btn, GetThemeColor("Color Theme"))
+                CreateRipple(btn, GetThemeColor("Accent"))
                 task.spawn(callback)
             end)
             btn.MouseEnter:Connect(function()
-                TweenService:Create(btnFrame, TweenInfo.new(0.2), {BackgroundColor3 = GetThemeColor("Color Button Hover"), BackgroundTransparency = 0.2}):Play()
-                TweenService:Create(btn, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255,255,255)}):Play()
+                TweenService:Create(btnFrame, TweenInfo.new(0.2), {BackgroundColor3 = GetThemeColor("Accent"), BackgroundTransparency = 0.2}):Play()
+                TweenService:Create(btn, TweenInfo.new(0.2), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
             end)
             btn.MouseLeave:Connect(function()
-                TweenService:Create(btnFrame, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0,0,0), BackgroundTransparency = 0.5}):Play()
-                TweenService:Create(btn, TweenInfo.new(0.2), {TextColor3 = GetThemeColor("Color Text")}):Play()
+                TweenService:Create(btnFrame, TweenInfo.new(0.2), {BackgroundColor3 = GetThemeColor("Panel"), BackgroundTransparency = 0.3}):Play()
+                TweenService:Create(btn, TweenInfo.new(0.2), {TextColor3 = GetThemeColor("Text")}):Play()
             end)
             return btn
         end
@@ -620,33 +477,44 @@ local function CreateWindow(data)
             local default = toggleData.Default or false
             local callback = toggleData.Callback or function() end
             local toggleFrame = Instance.new("Frame")
-            toggleFrame.Size = UDim2.new(1, 0, 0, 35)
-            toggleFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            toggleFrame.BackgroundTransparency = 0.5
+            toggleFrame.Size = UDim2.new(1, 0, 0, 45)
+            toggleFrame.BackgroundColor3 = GetThemeColor("Panel")
+            toggleFrame.BackgroundTransparency = 0.3
             toggleFrame.BorderSizePixel = 0
             toggleFrame.Parent = tabContent
-            CreateCorner(toggleFrame, 6)
+            CreateCorner(toggleFrame, 8)
+            CreateStroke(toggleFrame, GetThemeColor("Stroke"), 0.5, 0.4)
             local toggleLabel = Instance.new("TextLabel")
-            toggleLabel.Size = UDim2.new(0.7, -10, 1, 0)
-            toggleLabel.Position = UDim2.new(0, 10, 0, 0)
+            toggleLabel.Size = UDim2.new(0.6, -10, 0.7, 0)
+            toggleLabel.Position = UDim2.new(0, 10, 0, 2)
             toggleLabel.BackgroundTransparency = 1
             toggleLabel.Text = "  " .. name
-            toggleLabel.TextColor3 = GetThemeColor("Color Text")
+            toggleLabel.TextColor3 = GetThemeColor("Text")
             toggleLabel.TextSize = 14
             toggleLabel.Font = Enum.Font.Gotham
             toggleLabel.TextXAlignment = Enum.TextXAlignment.Left
             toggleLabel.Parent = toggleFrame
+            local descLabel = Instance.new("TextLabel")
+            descLabel.Size = UDim2.new(0.6, -10, 0.3, 0)
+            descLabel.Position = UDim2.new(0, 10, 0.6, 0)
+            descLabel.BackgroundTransparency = 1
+            descLabel.Text = toggleData.Description or ""
+            descLabel.TextColor3 = GetThemeColor("DarkText")
+            descLabel.TextSize = 11
+            descLabel.Font = Enum.Font.Gotham
+            descLabel.TextXAlignment = Enum.TextXAlignment.Left
+            descLabel.Parent = toggleFrame
             local toggleSwitch = Instance.new("Frame")
             toggleSwitch.Size = UDim2.new(0, 44, 0, 22)
             toggleSwitch.Position = UDim2.new(1, -54, 0.5, -11)
-            toggleSwitch.BackgroundColor3 = GetThemeColor("Color Toggle Off")
+            toggleSwitch.BackgroundColor3 = GetThemeColor("ToggleOff")
             toggleSwitch.BorderSizePixel = 0
             toggleSwitch.Parent = toggleFrame
             CreateCorner(toggleSwitch, 11)
             local toggleCircle = Instance.new("Frame")
             toggleCircle.Size = UDim2.new(0, 18, 0, 18)
             toggleCircle.Position = UDim2.new(0, 2, 0.5, -9)
-            toggleCircle.BackgroundColor3 = Color3.fromRGB(80,80,80)
+            toggleCircle.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
             toggleCircle.BorderSizePixel = 0
             toggleCircle.Parent = toggleSwitch
             CreateCorner(toggleCircle, 9)
@@ -654,11 +522,11 @@ local function CreateWindow(data)
             local function UpdateToggle(state)
                 toggleState = state
                 if state then
-                    TweenService:Create(toggleSwitch, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundColor3 = GetThemeColor("Color Toggle On")}):Play()
-                    TweenService:Create(toggleCircle, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Position = UDim2.new(1, -20, 0.5, -9), BackgroundColor3 = Color3.fromRGB(255,255,255)}):Play()
+                    TweenService:Create(toggleSwitch, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundColor3 = GetThemeColor("ToggleOn")}):Play()
+                    TweenService:Create(toggleCircle, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Position = UDim2.new(1, -20, 0.5, -9), BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
                 else
-                    TweenService:Create(toggleSwitch, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundColor3 = GetThemeColor("Color Toggle Off")}):Play()
-                    TweenService:Create(toggleCircle, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Position = UDim2.new(0, 2, 0.5, -9), BackgroundColor3 = Color3.fromRGB(80,80,80)}):Play()
+                    TweenService:Create(toggleSwitch, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundColor3 = GetThemeColor("ToggleOff")}):Play()
+                    TweenService:Create(toggleCircle, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {Position = UDim2.new(0, 2, 0.5, -9), BackgroundColor3 = Color3.fromRGB(80, 80, 80)}):Play()
                 end
                 task.spawn(callback, state)
             end
@@ -680,59 +548,60 @@ local function CreateWindow(data)
             local default = sliderData.Default or 0
             local callback = sliderData.Callback or function() end
             local sliderFrame = Instance.new("Frame")
-            sliderFrame.Size = UDim2.new(1, 0, 0, 50)
-            sliderFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            sliderFrame.BackgroundTransparency = 0.5
+            sliderFrame.Size = UDim2.new(1, 0, 0, 55)
+            sliderFrame.BackgroundColor3 = GetThemeColor("Panel")
+            sliderFrame.BackgroundTransparency = 0.3
             sliderFrame.BorderSizePixel = 0
             sliderFrame.Parent = tabContent
-            CreateCorner(sliderFrame, 6)
+            CreateCorner(sliderFrame, 8)
+            CreateStroke(sliderFrame, GetThemeColor("Stroke"), 0.5, 0.4)
             local sliderLabel = Instance.new("TextLabel")
-            sliderLabel.Size = UDim2.new(0.7, 0, 0, 20)
-            sliderLabel.Position = UDim2.new(0, 10, 0, 5)
+            sliderLabel.Size = UDim2.new(0.6, 0, 0.4, 0)
+            sliderLabel.Position = UDim2.new(0, 10, 0, 2)
             sliderLabel.BackgroundTransparency = 1
             sliderLabel.Text = "  " .. name
-            sliderLabel.TextColor3 = GetThemeColor("Color Text")
+            sliderLabel.TextColor3 = GetThemeColor("Text")
             sliderLabel.TextSize = 14
             sliderLabel.Font = Enum.Font.Gotham
             sliderLabel.TextXAlignment = Enum.TextXAlignment.Left
             sliderLabel.Parent = sliderFrame
             local valueLabel = Instance.new("TextLabel")
-            valueLabel.Size = UDim2.new(0.3, 0, 0, 20)
-            valueLabel.Position = UDim2.new(0.7, 0, 0, 5)
+            valueLabel.Size = UDim2.new(0.3, 0, 0.4, 0)
+            valueLabel.Position = UDim2.new(0.7, 0, 0, 2)
             valueLabel.BackgroundTransparency = 1
             valueLabel.Text = tostring(default)
-            valueLabel.TextColor3 = GetThemeColor("Color Theme")
+            valueLabel.TextColor3 = GetThemeColor("Accent")
             valueLabel.TextSize = 14
             valueLabel.Font = Enum.Font.GothamBold
             valueLabel.TextXAlignment = Enum.TextXAlignment.Right
             valueLabel.Parent = sliderFrame
             local sliderTrack = Instance.new("Frame")
             sliderTrack.Size = UDim2.new(1, -20, 0, 4)
-            sliderTrack.Position = UDim2.new(0, 10, 0, 35)
-            sliderTrack.BackgroundColor3 = GetThemeColor("Color Slider Track")
+            sliderTrack.Position = UDim2.new(0, 10, 0.7, 0)
+            sliderTrack.BackgroundColor3 = GetThemeColor("SliderTrack")
             sliderTrack.BorderSizePixel = 0
             sliderTrack.Parent = sliderFrame
             CreateCorner(sliderTrack, 2)
             local sliderFill = Instance.new("Frame")
             sliderFill.Size = UDim2.new(0, 0, 1, 0)
             sliderFill.Position = UDim2.new(0, 0, 0, 0)
-            sliderFill.BackgroundColor3 = GetThemeColor("Color Slider Fill")
+            sliderFill.BackgroundColor3 = GetThemeColor("SliderFill")
             sliderFill.BorderSizePixel = 0
             sliderFill.Parent = sliderTrack
             CreateCorner(sliderFill, 2)
             local sliderKnob = Instance.new("Frame")
-            sliderKnob.Size = UDim2.new(0, 12, 0, 12)
-            sliderKnob.Position = UDim2.new(0, 0, 0.5, -6)
-            sliderKnob.BackgroundColor3 = Color3.fromRGB(255,255,255)
+            sliderKnob.Size = UDim2.new(0, 14, 0, 14)
+            sliderKnob.Position = UDim2.new(0, 0, 0.5, -7)
+            sliderKnob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             sliderKnob.BorderSizePixel = 0
             sliderKnob.Parent = sliderTrack
-            CreateCorner(sliderKnob, 6)
+            CreateCorner(sliderKnob, 7)
             local currentVal = default
             local function UpdateSlider(value)
                 currentVal = math.clamp(value, min, max)
                 local percent = (currentVal - min) / (max - min)
                 sliderFill.Size = UDim2.new(percent, 0, 1, 0)
-                sliderKnob.Position = UDim2.new(percent, -6, 0.5, -6)
+                sliderKnob.Position = UDim2.new(percent, -7, 0.5, -7)
                 valueLabel.Text = tostring(math.floor(currentVal))
                 task.spawn(callback, currentVal)
             end
@@ -779,29 +648,30 @@ local function CreateWindow(data)
             local default = dropdownData.Default
             local callback = dropdownData.Callback or function() end
             local dropdownFrame = Instance.new("Frame")
-            dropdownFrame.Size = UDim2.new(1, 0, 0, 35)
-            dropdownFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            dropdownFrame.BackgroundTransparency = 0.5
+            dropdownFrame.Size = UDim2.new(1, 0, 0, 45)
+            dropdownFrame.BackgroundColor3 = GetThemeColor("Panel")
+            dropdownFrame.BackgroundTransparency = 0.3
             dropdownFrame.BorderSizePixel = 0
             dropdownFrame.Parent = tabContent
-            CreateCorner(dropdownFrame, 6)
+            CreateCorner(dropdownFrame, 8)
+            CreateStroke(dropdownFrame, GetThemeColor("Stroke"), 0.5, 0.4)
             local dropdownLabel = Instance.new("TextLabel")
-            dropdownLabel.Size = UDim2.new(0.7, 0, 1, 0)
+            dropdownLabel.Size = UDim2.new(0.6, 0, 1, 0)
             dropdownLabel.Position = UDim2.new(0, 10, 0, 0)
             dropdownLabel.BackgroundTransparency = 1
             dropdownLabel.Text = "  " .. name
-            dropdownLabel.TextColor3 = GetThemeColor("Color Text")
+            dropdownLabel.TextColor3 = GetThemeColor("Text")
             dropdownLabel.TextSize = 14
             dropdownLabel.Font = Enum.Font.Gotham
             dropdownLabel.TextXAlignment = Enum.TextXAlignment.Left
             dropdownLabel.Parent = dropdownFrame
             local dropdownBtn = Instance.new("TextButton")
-            dropdownBtn.Size = UDim2.new(0.3, -5, 1, -10)
-            dropdownBtn.Position = UDim2.new(0.7, 0, 0.5, -12.5)
-            dropdownBtn.BackgroundColor3 = GetThemeColor("Color Dropdown")
+            dropdownBtn.Size = UDim2.new(0.35, -5, 1, -10)
+            dropdownBtn.Position = UDim2.new(0.65, 0, 0.5, -12.5)
+            dropdownBtn.BackgroundColor3 = GetThemeColor("Dropdown")
             dropdownBtn.BackgroundTransparency = 0.5
             dropdownBtn.Text = default or "Select"
-            dropdownBtn.TextColor3 = GetThemeColor("Color Text")
+            dropdownBtn.TextColor3 = GetThemeColor("Text")
             dropdownBtn.TextSize = 12
             dropdownBtn.Font = Enum.Font.Gotham
             dropdownBtn.Parent = dropdownFrame
@@ -809,13 +679,13 @@ local function CreateWindow(data)
             local dropdownList = Instance.new("ScrollingFrame")
             dropdownList.Size = UDim2.new(1, 0, 0, 0)
             dropdownList.Position = UDim2.new(0, 0, 1, 0)
-            dropdownList.BackgroundColor3 = Color3.fromRGB(10,10,10)
+            dropdownList.BackgroundColor3 = GetThemeColor("Dropdown")
             dropdownList.BackgroundTransparency = 0.1
             dropdownList.BorderSizePixel = 0
             dropdownList.Visible = false
             dropdownList.ClipsDescendants = true
             dropdownList.ScrollBarThickness = 2
-            dropdownList.ScrollBarImageColor3 = GetThemeColor("Color Theme")
+            dropdownList.ScrollBarImageColor3 = GetThemeColor("Accent")
             dropdownList.Parent = dropdownFrame
             CreateCorner(dropdownList, 6)
             local listLayout = Instance.new("UIListLayout")
@@ -838,10 +708,10 @@ local function CreateWindow(data)
                 for _, item in pairs(items) do
                     local itemBtn = Instance.new("TextButton")
                     itemBtn.Size = UDim2.new(1, 0, 0, 30)
-                    itemBtn.BackgroundColor3 = Color3.fromRGB(0,0,0)
+                    itemBtn.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
                     itemBtn.BackgroundTransparency = 0.5
                     itemBtn.Text = "  " .. item
-                    itemBtn.TextColor3 = GetThemeColor("Color Dark Text")
+                    itemBtn.TextColor3 = GetThemeColor("DarkText")
                     itemBtn.TextSize = 12
                     itemBtn.Font = Enum.Font.Gotham
                     itemBtn.TextXAlignment = Enum.TextXAlignment.Left
@@ -850,16 +720,16 @@ local function CreateWindow(data)
                     itemBtn.MouseButton1Click:Connect(function()
                         selectedItem = item
                         dropdownBtn.Text = item
-                        dropdownBtn.TextColor3 = GetThemeColor("Color Theme")
+                        dropdownBtn.TextColor3 = GetThemeColor("Accent")
                         dropdownList.Visible = false
-                        dropdownFrame.Size = UDim2.new(1, 0, 0, 35)
+                        dropdownFrame.Size = UDim2.new(1, 0, 0, 45)
                         task.spawn(callback, item)
                     end)
                     itemBtn.MouseEnter:Connect(function()
-                        TweenService:Create(itemBtn, TweenInfo.new(0.2), {BackgroundColor3 = GetThemeColor("Color Theme"), BackgroundTransparency = 0.3, TextColor3 = Color3.fromRGB(255,255,255)}):Play()
+                        TweenService:Create(itemBtn, TweenInfo.new(0.2), {BackgroundColor3 = GetThemeColor("Accent"), BackgroundTransparency = 0.3, TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
                     end)
                     itemBtn.MouseLeave:Connect(function()
-                        TweenService:Create(itemBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0,0,0), BackgroundTransparency = 0.5, TextColor3 = GetThemeColor("Color Dark Text")}):Play()
+                        TweenService:Create(itemBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(0, 0, 0), BackgroundTransparency = 0.5, TextColor3 = GetThemeColor("DarkText")}):Play()
                     end)
                 end
                 local itemCount = 0
@@ -872,15 +742,15 @@ local function CreateWindow(data)
             dropdownBtn.MouseButton1Click:Connect(function()
                 dropdownList.Visible = not dropdownList.Visible
                 if dropdownList.Visible then
-                    dropdownFrame.Size = UDim2.new(1, 0, 0, 35 + dropdownList.AbsoluteSize.Y)
+                    dropdownFrame.Size = UDim2.new(1, 0, 0, 45 + dropdownList.AbsoluteSize.Y)
                 else
-                    dropdownFrame.Size = UDim2.new(1, 0, 0, 35)
+                    dropdownFrame.Size = UDim2.new(1, 0, 0, 45)
                 end
             end)
             PopulateDropdown()
             if selectedItem then
                 dropdownBtn.Text = selectedItem
-                dropdownBtn.TextColor3 = GetThemeColor("Color Theme")
+                dropdownBtn.TextColor3 = GetThemeColor("Accent")
             end
             return dropdownFrame
         end
@@ -890,18 +760,19 @@ local function CreateWindow(data)
             local default = textboxData.Default or ""
             local callback = textboxData.Callback or function() end
             local textboxFrame = Instance.new("Frame")
-            textboxFrame.Size = UDim2.new(1, 0, 0, 35)
-            textboxFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            textboxFrame.BackgroundTransparency = 0.5
+            textboxFrame.Size = UDim2.new(1, 0, 0, 45)
+            textboxFrame.BackgroundColor3 = GetThemeColor("Panel")
+            textboxFrame.BackgroundTransparency = 0.3
             textboxFrame.BorderSizePixel = 0
             textboxFrame.Parent = tabContent
-            CreateCorner(textboxFrame, 6)
+            CreateCorner(textboxFrame, 8)
+            CreateStroke(textboxFrame, GetThemeColor("Stroke"), 0.5, 0.4)
             local textboxLabel = Instance.new("TextLabel")
             textboxLabel.Size = UDim2.new(0.5, 0, 1, 0)
             textboxLabel.Position = UDim2.new(0, 10, 0, 0)
             textboxLabel.BackgroundTransparency = 1
             textboxLabel.Text = "  " .. name
-            textboxLabel.TextColor3 = GetThemeColor("Color Text")
+            textboxLabel.TextColor3 = GetThemeColor("Text")
             textboxLabel.TextSize = 14
             textboxLabel.Font = Enum.Font.Gotham
             textboxLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -909,14 +780,14 @@ local function CreateWindow(data)
             local inputBox = Instance.new("TextBox")
             inputBox.Size = UDim2.new(0.5, -10, 1, -10)
             inputBox.Position = UDim2.new(0.5, 0, 0.5, -12.5)
-            inputBox.BackgroundColor3 = Color3.fromRGB(20,20,20)
+            inputBox.BackgroundColor3 = GetThemeColor("Dropdown")
             inputBox.BackgroundTransparency = 0.5
             inputBox.Text = default
-            inputBox.TextColor3 = GetThemeColor("Color Text")
+            inputBox.TextColor3 = GetThemeColor("Text")
             inputBox.TextSize = 12
             inputBox.Font = Enum.Font.Gotham
             inputBox.PlaceholderText = placeholder
-            inputBox.PlaceholderColor3 = GetThemeColor("Color Dark Text")
+            inputBox.PlaceholderColor3 = GetThemeColor("DarkText")
             inputBox.Parent = textboxFrame
             CreateCorner(inputBox, 4)
             inputBox.FocusLost:Connect(function()
@@ -929,18 +800,19 @@ local function CreateWindow(data)
             local defaultKey = keybindData.Key or "None"
             local callback = keybindData.Callback or function() end
             local keybindFrame = Instance.new("Frame")
-            keybindFrame.Size = UDim2.new(1, 0, 0, 35)
-            keybindFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            keybindFrame.BackgroundTransparency = 0.5
+            keybindFrame.Size = UDim2.new(1, 0, 0, 45)
+            keybindFrame.BackgroundColor3 = GetThemeColor("Panel")
+            keybindFrame.BackgroundTransparency = 0.3
             keybindFrame.BorderSizePixel = 0
             keybindFrame.Parent = tabContent
-            CreateCorner(keybindFrame, 6)
+            CreateCorner(keybindFrame, 8)
+            CreateStroke(keybindFrame, GetThemeColor("Stroke"), 0.5, 0.4)
             local keybindLabel = Instance.new("TextLabel")
             keybindLabel.Size = UDim2.new(0.6, 0, 1, 0)
             keybindLabel.Position = UDim2.new(0, 10, 0, 0)
             keybindLabel.BackgroundTransparency = 1
             keybindLabel.Text = "  " .. name
-            keybindLabel.TextColor3 = GetThemeColor("Color Text")
+            keybindLabel.TextColor3 = GetThemeColor("Text")
             keybindLabel.TextSize = 14
             keybindLabel.Font = Enum.Font.Gotham
             keybindLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -948,10 +820,10 @@ local function CreateWindow(data)
             local keyBtn = Instance.new("TextButton")
             keyBtn.Size = UDim2.new(0.4, -10, 1, -10)
             keyBtn.Position = UDim2.new(0.6, 0, 0.5, -12.5)
-            keyBtn.BackgroundColor3 = Color3.fromRGB(20,20,20)
+            keyBtn.BackgroundColor3 = GetThemeColor("Dropdown")
             keyBtn.BackgroundTransparency = 0.5
             keyBtn.Text = defaultKey
-            keyBtn.TextColor3 = GetThemeColor("Color Theme")
+            keyBtn.TextColor3 = GetThemeColor("Accent")
             keyBtn.TextSize = 12
             keyBtn.Font = Enum.Font.GothamBold
             keyBtn.Parent = keybindFrame
@@ -962,10 +834,10 @@ local function CreateWindow(data)
                 isBinding = not isBinding
                 if isBinding then
                     keyBtn.Text = "..."
-                    keyBtn.TextColor3 = Color3.fromRGB(255,200,0)
+                    keyBtn.TextColor3 = Color3.fromRGB(255, 200, 0)
                 else
                     keyBtn.Text = boundKey
-                    keyBtn.TextColor3 = GetThemeColor("Color Theme")
+                    keyBtn.TextColor3 = GetThemeColor("Accent")
                 end
             end)
             UserInputService.InputBegan:Connect(function(input)
@@ -974,7 +846,7 @@ local function CreateWindow(data)
                     if keyName and keyName ~= "Unknown" then
                         boundKey = keyName
                         keyBtn.Text = keyName
-                        keyBtn.TextColor3 = GetThemeColor("Color Theme")
+                        keyBtn.TextColor3 = GetThemeColor("Accent")
                         isBinding = false
                         task.spawn(callback, keyName)
                     end
@@ -988,7 +860,7 @@ local function CreateWindow(data)
             labelFrame.Size = UDim2.new(1, 0, 0, 25)
             labelFrame.BackgroundTransparency = 1
             labelFrame.Text = "  " .. text
-            labelFrame.TextColor3 = GetThemeColor("Color Dark Text")
+            labelFrame.TextColor3 = GetThemeColor("DarkText")
             labelFrame.TextSize = 13
             labelFrame.Font = Enum.Font.Gotham
             labelFrame.TextXAlignment = Enum.TextXAlignment.Left
@@ -1006,7 +878,7 @@ local function CreateWindow(data)
             paraLabel.Position = UDim2.new(0, 10, 0, 0)
             paraLabel.BackgroundTransparency = 1
             paraLabel.Text = text
-            paraLabel.TextColor3 = GetThemeColor("Color Dark Text")
+            paraLabel.TextColor3 = GetThemeColor("DarkText")
             paraLabel.TextSize = 12
             paraLabel.Font = Enum.Font.Gotham
             paraLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -1016,77 +888,78 @@ local function CreateWindow(data)
         end
         function tabAPI:AddColorPicker(colorData)
             local name = colorData.Name or "Color Picker"
-            local default = colorData.Default or GetThemeColor("Color Theme")
+            local default = colorData.Default or GetThemeColor("Accent")
             local callback = colorData.Callback or function() end
             local pickerFrame = Instance.new("Frame")
-            pickerFrame.Size = UDim2.new(1, 0, 0, 50)
-            pickerFrame.BackgroundColor3 = Color3.fromRGB(0,0,0)
-            pickerFrame.BackgroundTransparency = 0.5
+            pickerFrame.Size = UDim2.new(1, 0, 0, 60)
+            pickerFrame.BackgroundColor3 = GetThemeColor("Panel")
+            pickerFrame.BackgroundTransparency = 0.3
             pickerFrame.BorderSizePixel = 0
             pickerFrame.Parent = tabContent
-            CreateCorner(pickerFrame, 6)
+            CreateCorner(pickerFrame, 8)
+            CreateStroke(pickerFrame, GetThemeColor("Stroke"), 0.5, 0.4)
             local label = Instance.new("TextLabel")
-            label.Size = UDim2.new(0.6, 0, 1, 0)
+            label.Size = UDim2.new(0.5, 0, 1, 0)
             label.Position = UDim2.new(0, 10, 0, 0)
             label.BackgroundTransparency = 1
             label.Text = "  " .. name
-            label.TextColor3 = GetThemeColor("Color Text")
+            label.TextColor3 = GetThemeColor("Text")
             label.TextSize = 14
             label.Font = Enum.Font.Gotham
             label.TextXAlignment = Enum.TextXAlignment.Left
             label.Parent = pickerFrame
             local colorDisplay = Instance.new("Frame")
             colorDisplay.Size = UDim2.new(0, 40, 0, 30)
-            colorDisplay.Position = UDim2.new(0.7, 0, 0.5, -15)
+            colorDisplay.Position = UDim2.new(0.65, 0, 0.5, -15)
             colorDisplay.BackgroundColor3 = default
             colorDisplay.BorderSizePixel = 0
             colorDisplay.Parent = pickerFrame
             CreateCorner(colorDisplay, 4)
-            CreateStroke(colorDisplay, GetThemeColor("Color Stroke"), 1, 0.3)
+            CreateStroke(colorDisplay, GetThemeColor("Stroke"), 1, 0.3)
             local rInput = Instance.new("TextBox")
             rInput.Size = UDim2.new(0, 24, 0, 20)
             rInput.Position = UDim2.new(0.85, -40, 0.5, -10)
-            rInput.BackgroundColor3 = Color3.fromRGB(20,20,20)
+            rInput.BackgroundColor3 = GetThemeColor("Dropdown")
             rInput.BackgroundTransparency = 0.5
             rInput.Text = tostring(math.floor(default.R * 255))
-            rInput.TextColor3 = GetThemeColor("Color Text")
+            rInput.TextColor3 = GetThemeColor("Text")
             rInput.TextSize = 10
             rInput.Font = Enum.Font.Gotham
             rInput.PlaceholderText = "R"
-            rInput.PlaceholderColor3 = GetThemeColor("Color Dark Text")
+            rInput.PlaceholderColor3 = GetThemeColor("DarkText")
             rInput.Parent = pickerFrame
             CreateCorner(rInput, 3)
             local gInput = Instance.new("TextBox")
             gInput.Size = UDim2.new(0, 24, 0, 20)
             gInput.Position = UDim2.new(0.85, 12, 0.5, -10)
-            gInput.BackgroundColor3 = Color3.fromRGB(20,20,20)
+            gInput.BackgroundColor3 = GetThemeColor("Dropdown")
             gInput.BackgroundTransparency = 0.5
             gInput.Text = tostring(math.floor(default.G * 255))
-            gInput.TextColor3 = GetThemeColor("Color Text")
+            gInput.TextColor3 = GetThemeColor("Text")
             gInput.TextSize = 10
             gInput.Font = Enum.Font.Gotham
             gInput.PlaceholderText = "G"
-            gInput.PlaceholderColor3 = GetThemeColor("Color Dark Text")
+            gInput.PlaceholderColor3 = GetThemeColor("DarkText")
             gInput.Parent = pickerFrame
             CreateCorner(gInput, 3)
             local bInput = Instance.new("TextBox")
             bInput.Size = UDim2.new(0, 24, 0, 20)
             bInput.Position = UDim2.new(0.85, 64, 0.5, -10)
-            bInput.BackgroundColor3 = Color3.fromRGB(20,20,20)
+            bInput.BackgroundColor3 = GetThemeColor("Dropdown")
             bInput.BackgroundTransparency = 0.5
             bInput.Text = tostring(math.floor(default.B * 255))
-            bInput.TextColor3 = GetThemeColor("Color Text")
+            bInput.TextColor3 = GetThemeColor("Text")
             bInput.TextSize = 10
             bInput.Font = Enum.Font.Gotham
             bInput.PlaceholderText = "B"
-            bInput.PlaceholderColor3 = GetThemeColor("Color Dark Text")
+            bInput.PlaceholderColor3 = GetThemeColor("DarkText")
             bInput.Parent = pickerFrame
             CreateCorner(bInput, 3)
             local function UpdateColorFromRGB()
                 local r = tonumber(rInput.Text) or 0
                 local g = tonumber(gInput.Text) or 0
                 local b = tonumber(bInput.Text) or 0
-                local color = Color3.fromRGB(math.clamp(r,0,255), math.clamp(g,0,255), math.clamp(b,0,255))
+                local color = Color3.fromRGB(math.clamp(r, 0, 255), math.clamp(g, 0, 255), math.clamp(b, 0, 255))
                 colorDisplay.BackgroundColor3 = color
                 task.spawn(callback, color)
             end
@@ -1111,14 +984,14 @@ local function CreateWindow(data)
     local dragStart = nil
     local startPos = nil
     local dragging = false
-    titleBar.InputBegan:Connect(function(input)
+    headerFrame.InputBegan:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragStart = input.Position
             startPos = windowFrame.Position
             dragging = true
         end
     end)
-    titleBar.InputEnded:Connect(function(input)
+    headerFrame.InputEnded:Connect(function(input)
         if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
             dragging = false
         end
@@ -1157,7 +1030,7 @@ local function CreateWindow(data)
     local function MinimizeWindow()
         windowMinimized = not windowMinimized
         if windowMinimized then
-            TweenService:Create(windowFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(0, windowSize.X, 0, 50)}):Play()
+            TweenService:Create(windowFrame, TweenInfo.new(0.4, Enum.EasingStyle.Quart), {Size = UDim2.new(0, windowSize.X, 0, 60)}):Play()
             sidebar.Visible = false
             contentContainer.Visible = false
         else
@@ -1168,7 +1041,7 @@ local function CreateWindow(data)
     end
     minimizeBtn.MouseButton1Click:Connect(MinimizeWindow)
     closeBtn.MouseButton1Click:Connect(function()
-        TweenService:Create(windowFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 1, Size = UDim2.new(0,0,0,0)}):Play()
+        TweenService:Create(windowFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
         task.delay(0.3, function()
             windowFrame.Visible = false
         end)
@@ -1180,7 +1053,7 @@ local function CreateWindow(data)
             windowFrame.Visible = true
             TweenService:Create(windowFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = LibraryConfig.Transparency, Size = UDim2.new(0, windowSize.X, 0, windowSize.Y)}):Play()
         else
-            TweenService:Create(windowFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 1, Size = UDim2.new(0,0,0,0)}):Play()
+            TweenService:Create(windowFrame, TweenInfo.new(0.3, Enum.EasingStyle.Quart), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
             task.delay(0.3, function()
                 windowFrame.Visible = false
             end)
@@ -1192,41 +1065,33 @@ local function CreateWindow(data)
         end
     end)
     function self:UpdateTheme()
-        windowFrame.BackgroundColor3 = GetThemeColor("Color Hub 2")
+        windowFrame.BackgroundColor3 = GetThemeColor("Background")
         windowFrame.BackgroundTransparency = LibraryConfig.Transparency
         local stroke = windowFrame:FindFirstChild("UIStroke")
         if stroke then
-            stroke.Color = GetThemeColor("Color Stroke")
+            stroke.Color = GetThemeColor("Stroke")
             stroke.Thickness = LibraryConfig.StrokeThickness
         end
         local glow = windowFrame:FindFirstChild("Glow")
         if glow then
-            glow.ImageColor3 = GetThemeColor("Color Stroke")
+            glow.ImageColor3 = GetThemeColor("BrightAccent")
         end
-        titleLabel.TextColor3 = GetThemeColor("Color Text")
-        subtitleLabel.TextColor3 = GetThemeColor("Color Dark Text")
-        iconImage.ImageColor3 = GetThemeColor("Color Theme")
+        titleLabel.TextColor3 = GetThemeColor("Text")
+        subtitleLabel.TextColor3 = GetThemeColor("DarkText")
+        logoImage.ImageColor3 = GetThemeColor("Accent")
         for _, tabBtn in pairs(tabButtons) do
             local ind = tabBtn:FindFirstChild("Indicator")
             if ind then
-                ind.BackgroundColor3 = GetThemeColor("Color Theme")
+                ind.BackgroundColor3 = GetThemeColor("Accent")
             end
-            if tabBtn.TextColor3 == GetThemeColor("Color Text") then
-                tabBtn.TextColor3 = GetThemeColor("Color Text")
-            else
-                tabBtn.TextColor3 = GetThemeColor("Color Dark Text")
+            if tabBtn.BackgroundColor3 == GetThemeColor("TabSelected") then
+                tabBtn.BackgroundColor3 = GetThemeColor("TabSelected")
             end
         end
         for _, content in pairs(tabContents) do
-            content.ScrollBarImageColor3 = GetThemeColor("Color Theme")
+            content.ScrollBarImageColor3 = GetThemeColor("Accent")
         end
-        if CreatorMode then
-            local footer = windowFrame:FindFirstChild("Footer")
-            if footer then
-                footer.TextColor3 = GetThemeColor("Color Dark Text")
-            end
-        end
-        resizeHandle.BackgroundColor3 = GetThemeColor("Color Theme")
+        resizeHandle.BackgroundColor3 = GetThemeColor("Accent")
     end
     table.insert(WindowInstances, self)
     function self:AddTab(tabName, tabIcon)
@@ -1247,9 +1112,6 @@ local function CreateWindow(data)
         end
     end
     return self
-end
-function KODBloodUILibrary.CreateWindow(data)
-    return CreateWindow(data)
 end
 function KODBloodUILibrary.CreateWindow(data)
     return CreateWindow(data)
@@ -1301,7 +1163,7 @@ function KODBloodUILibrary.ListConfigs()
 end
 function KODBloodUILibrary.Cleanup()
     for _, win in pairs(WindowInstances) do
-        win:Destroy()
+        if win.Destroy then win:Destroy() end
     end
     for _, notif in pairs(Notifications) do
         notif:Destroy()
@@ -1309,6 +1171,4 @@ function KODBloodUILibrary.Cleanup()
     table.clear(WindowInstances)
     table.clear(Notifications)
 end
-KODBloodUILibrary.Debug = DebugMode
-KODBloodUILibrary.CreatorMode = CreatorMode
 return KODBloodUILibrary
