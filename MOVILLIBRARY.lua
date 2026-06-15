@@ -1,1401 +1,1275 @@
--- Blood Library v5.0
--- Framework de UI para Roblox â€” sin contenido predefinido.
--- Uso: local Lib = loadstring(game:HttpGet("URL"))()
+--[[
+  ____  _     ___   ___  ____    _     ___ ____  ____    _    ____  _   _
+ | __ )| |   / _ \ / _ \|  _ \  | |   |_ _| __ )|  _ \  / \  |  _ \| \ | |
+ |  _ \| |  | | | | | | | | | | | |    | ||  _ \| |_) |/ _ \ | |_) |  \| |
+ | |_) | |__| |_| | |_| | |_| | | |___ | || |_) |  _ </ ___ \|  _ <| |\  |
+ |____/|_____\___/ \___/|____/  |_____|___|____/|_| \_/_/   \_\_| \_\_| \_|
 
-if getgenv().BloodLib then pcall(function() getgenv().BloodLib:Destroy() end) end
+  BLOOD LIBRARY v1.0  –  Premium Roblox UI Framework
+  Carga: local L = loadstring(game:HttpGet("RAW_URL"))()
+]]
 
-cloneref = cloneref or function(o) return o end
+-- ─── Services ─────────────────────────────────────────────────────────────────
+local TS  = game:GetService("TweenService")
+local UIS = game:GetService("UserInputService")
+local PL  = game:GetService("Players")
+local HS  = game:GetService("HttpService")
 
-local Players          = cloneref(game:GetService("Players"))
-local UserInputService = cloneref(game:GetService("UserInputService"))
-local TweenService     = cloneref(game:GetService("TweenService"))
-local HttpService      = cloneref(game:GetService("HttpService"))
-local CoreGui          = cloneref(game:GetService("CoreGui"))
-gethui = gethui or function() return CoreGui end
-local LP = Players.LocalPlayer
+-- ─── Utils ────────────────────────────────────────────────────────────────────
+local U = {}
 
--- â”€â”€â”€ Iconos Lucide â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-local Icons = {
-        ["home"]="rbxassetid://10723407389",["settings"]="rbxassetid://10709810948",
-        ["cog"]="rbxassetid://10709810948",["user"]="rbxassetid://10723550978",
-        ["users"]="rbxassetid://10723551083",["shield"]="rbxassetid://10723540195",
-        ["shieldcheck"]="rbxassetid://10723540049",["sword"]="rbxassetid://10723547726",
-        ["swords"]="rbxassetid://10723547883",["crosshair"]="rbxassetid://10709818534",
-        ["target"]="rbxassetid://10723548259",["zap"]="rbxassetid://10723554694",
-        ["flame"]="rbxassetid://10723376114",["star"]="rbxassetid://10723546388",
-        ["heart"]="rbxassetid://10723406885",["eye"]="rbxassetid://10723346959",
-        ["eyeoff"]="rbxassetid://10723346871",["globe"]="rbxassetid://10723404337",
-        ["compass"]="rbxassetid://10709811445",["activity"]="rbxassetid://10709752035",
-        ["alerttriangle"]="rbxassetid://10709753149",["alertcircle"]="rbxassetid://10709752996",
-        ["info"]="rbxassetid://10723415903",["helpcircle"]="rbxassetid://10723406988",
-        ["checkcircle"]="rbxassetid://10709790387",["check"]="rbxassetid://10709790644",
-        ["x"]="rbxassetid://10723553393",["plus"]="rbxassetid://10723526862",
-        ["minus"]="rbxassetid://10723521534",["refresh"]="rbxassetid://10723530027",
-        ["download"]="rbxassetid://10723344270",["upload"]="rbxassetid://10723552116",
-        ["save"]="rbxassetid://10723535018",["folder"]="rbxassetid://10723387563",
-        ["folderopen"]="rbxassetid://10723386277",["file"]="rbxassetid://10723374641",
-        ["filetext"]="rbxassetid://10723367380",["edit"]="rbxassetid://10734883598",
-        ["edit2"]="rbxassetid://10723344885",["trash"]="rbxassetid://10723549558",
-        ["trash2"]="rbxassetid://10723549696",["copy"]="rbxassetid://10709812159",
-        ["clipboard"]="rbxassetid://10709799288",["lock"]="rbxassetid://10723434711",
-        ["unlock"]="rbxassetid://10723551847",["key"]="rbxassetid://10723416652",
-        ["cpu"]="rbxassetid://10709813383",["monitor"]="rbxassetid://10723521855",
-        ["smartphone"]="rbxassetid://10723541894",["wifi"]="rbxassetid://10723552817",
-        ["wifioff"]="rbxassetid://10723552716",["bluetooth"]="rbxassetid://10709776655",
-        ["camera"]="rbxassetid://10709789686",["video"]="rbxassetid://10723552337",
-        ["mic"]="rbxassetid://10723521349",["volume"]="rbxassetid://10723552490",
-        ["volumex"]="rbxassetid://10723552644",["music"]="rbxassetid://10723522170",
-        ["headphones"]="rbxassetid://10723406165",["gamepad"]="rbxassetid://10723395457",
-        ["gamepad2"]="rbxassetid://10723395215",["joystick"]="rbxassetid://10723416527",
-        ["flag"]="rbxassetid://10723375890",["gift"]="rbxassetid://10723396402",
-        ["award"]="rbxassetid://10709769406",["crown"]="rbxassetid://10709818626",
-        ["gem"]="rbxassetid://10723396000",["diamond"]="rbxassetid://10709819149",
-        ["coins"]="rbxassetid://10709811110",["banknote"]="rbxassetid://10709770178",
-        ["tag"]="rbxassetid://10723548076",["box"]="rbxassetid://10709782497",
-        ["layers"]="rbxassetid://10723424505",["grid"]="rbxassetid://10723404936",
-        ["list"]="rbxassetid://10723433811",["layoutdashboard"]="rbxassetid://10723424646",
-        ["barchart"]="rbxassetid://10709773755",["linechart"]="rbxassetid://10723426393",
-        ["gauge"]="rbxassetid://10723395708",["cloud"]="rbxassetid://10709806740",
-        ["sun"]="rbxassetid://10723547595",["moon"]="rbxassetid://10723521699",
-        ["bug"]="rbxassetid://10709782845",["terminal"]="rbxassetid://10723548620",
-        ["code"]="rbxassetid://10709810463",["database"]="rbxassetid://10709818996",
-        ["server"]="rbxassetid://10723539440",["share"]="rbxassetid://10723539671",
-        ["link"]="rbxassetid://10723426722",["search"]="rbxassetid://10723535152",
-        ["filter"]="rbxassetid://10723375128",["sliders"]="rbxassetid://10723541614",
-        ["trendingup"]="rbxassetid://10723549370",["trendingdown"]="rbxassetid://10723549230",
-        ["arrowup"]="rbxassetid://10709768939",["arrowdown"]="rbxassetid://10709767827",
-        ["arrowleft"]="rbxassetid://10709768114",["arrowright"]="rbxassetid://10709768347",
-        ["chevronup"]="rbxassetid://10709791523",["chevrondown"]="rbxassetid://10709790948",
-        ["chevronleft"]="rbxassetid://10709791281",["chevronright"]="rbxassetid://10709791437",
-        ["maximize"]="rbxassetid://10723520876",["minimize"]="rbxassetid://10723521442",
-        ["power"]="rbxassetid://10723526731",["poweroff"]="rbxassetid://10723526806",
-        ["play"]="rbxassetid://10723526497",["pause"]="rbxassetid://10723524430",
-        ["stop"]="rbxassetid://10723547329",["bell"]="rbxassetid://10709775704",
-        ["belloff"]="rbxassetid://10709775320",["mail"]="rbxassetid://10734885430",
-        ["message"]="rbxassetid://10723520971",["send"]="rbxassetid://10723539210",
-        ["calendar"]="rbxassetid://10709789505",["clock"]="rbxassetid://10709805144",
-        ["timer"]="rbxassetid://10723549001",["history"]="rbxassetid://10723407335",
-        ["hourglass"]="rbxassetid://10723407498",["bookmark"]="rbxassetid://10709782154",
-        ["thumbsup"]="rbxassetid://10723548979",["thumbsdown"]="rbxassetid://10723548903",
-        ["smile"]="rbxassetid://10723541839",["frown"]="rbxassetid://10723394681",
-        ["ghost"]="rbxassetid://10723396107",["skull"]="rbxassetid://10723541438",
-        ["bomb"]="rbxassetid://10709781460",["hammer"]="rbxassetid://10723405360",
-        ["wrench"]="rbxassetid://10723553293",["tool"]="rbxassetid://10723549128",
-        ["scissors"]="rbxassetid://10723535098",["axe"]="rbxassetid://10709769508",
-        ["anchor"]="rbxassetid://10709761530",["magnet"]="rbxassetid://10723435069",
-        ["feather"]="rbxassetid://10723354671",["leaf"]="rbxassetid://10723425539",
-        ["tree"]="rbxassetid://10723549321",["mountain"]="rbxassetid://10723521990",
-        ["bike"]="rbxassetid://10709775894",["car"]="rbxassetid://10709789810",
-        ["plane"]="rbxassetid://10723526119",["rocket"]="rbxassetid://10723532628",
-        ["navigation"]="rbxassetid://10723522244",["locate"]="rbxassetid://10723434557",
-        ["fingerprint"]="rbxassetid://10723375250",["binary"]="rbxassetid://10709776050",
-        ["infinity"]="rbxassetid://10723415766",["hash"]="rbxassetid://10723405975",
-        ["person"]="rbxassetid://10723550978",["menu"]="rbxassetid://10723521207",
-        ["command"]="rbxassetid://10709811365",["lightbulb"]="rbxassetid://10723425852",
-        ["lamp"]="rbxassetid://10723417513",["building"]="rbxassetid://10709783051",
-        ["factory"]="rbxassetid://10723347051",["misc"]="rbxassetid://10723522023",
-        ["more"]="rbxassetid://10723524027",["dots"]="rbxassetid://10723524027",
-        ["percent"]="rbxassetid://10723525432",["dollarsign"]="rbxassetid://10723343958",
-        ["contact"]="rbxassetid://10709811834",["package"]="rbxassetid://10723524268",
-        ["robot"]="rbxassetid://10709782230",["bot"]="rbxassetid://10709782230",
+U.F  = TweenInfo.new(0.15, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+U.M  = TweenInfo.new(0.28, Enum.EasingStyle.Quint, Enum.EasingDirection.Out)
+U.SP = TweenInfo.new(0.40, Enum.EasingStyle.Back,  Enum.EasingDirection.Out)
+
+function U.tw(o, i, p) local t=TS:Create(o,i,p); t:Play(); return t end
+function U.clamp(v,a,b) return math.max(a,math.min(b,v)) end
+function U.round(n,s) s=s or 1; return math.floor(n/s+0.5)*s end
+function U.hex(c) return string.format("#%02X%02X%02X",c.R*255//1,c.G*255//1,c.B*255//1) end
+function U.mobile() return UIS.TouchEnabled and not UIS.KeyboardEnabled end
+
+function U.new(cls, p, ch)
+	local i = Instance.new(cls)
+	for k,v in pairs(p or {}) do if k~="Parent" then i[k]=v end end
+	for _,c in ipairs(ch or {}) do c.Parent=i end
+	if p and p.Parent then i.Parent=p.Parent end
+	return i
+end
+
+function U.corner(obj, r)
+	local c=Instance.new("UICorner"); c.CornerRadius=r or UDim.new(0,6); c.Parent=obj; return c
+end
+
+function U.stroke(obj, col, px, tr)
+	local s=Instance.new("UIStroke"); s.Color=col or Color3.new(.3,.3,.3)
+	s.Thickness=px or 1; s.Transparency=tr or 0; s.Parent=obj; return s
+end
+
+function U.pad(obj, t, r, b, l)
+	local p=Instance.new("UIPadding")
+	p.PaddingTop=UDim.new(0,t or 0); p.PaddingRight=UDim.new(0,r or 0)
+	p.PaddingBottom=UDim.new(0,b or 0); p.PaddingLeft=UDim.new(0,l or 0)
+	p.Parent=obj; return p
+end
+
+function U.list(obj, dir, gap, align)
+	local l=Instance.new("UIListLayout")
+	l.FillDirection=dir or Enum.FillDirection.Vertical
+	l.Padding=UDim.new(0,gap or 0)
+	l.SortOrder=Enum.SortOrder.LayoutOrder
+	l.HorizontalAlignment=align or Enum.HorizontalAlignment.Left
+	l.Parent=obj; return l
+end
+
+function U.drag(win, handle)
+	handle=handle or win
+	local drag,ds,sp
+	handle.InputBegan:Connect(function(i)
+		if i.UserInputType~=Enum.UserInputType.MouseButton1 and i.UserInputType~=Enum.UserInputType.Touch then return end
+		drag=true; ds=i.Position; sp=win.Position
+		i.Changed:Connect(function() if i.UserInputState==Enum.UserInputState.End then drag=false end end)
+	end)
+	UIS.InputChanged:Connect(function(i)
+		if not drag then return end
+		local d=i.Position-ds
+		win.Position=UDim2.new(sp.X.Scale,sp.X.Offset+d.X,sp.Y.Scale,sp.Y.Offset+d.Y)
+	end)
+end
+
+function U.save(ns,k,v) pcall(function() game:GetService("DataStoreService"):GetDataStore(ns):SetAsync(k,v) end) end
+function U.load(ns,k)
+	local ok,v=pcall(function() return game:GetService("DataStoreService"):GetDataStore(ns):GetAsync(k) end)
+	return ok and v or nil
+end
+
+-- ─── Themes ───────────────────────────────────────────────────────────────────
+local T = {}
+
+T.Blood = {
+	name="Blood",
+	bg      = Color3.fromRGB(10,10,12),    bgAlt = Color3.fromRGB(16,16,18),
+	sidebar = Color3.fromRGB(13,13,15),    card  = Color3.fromRGB(20,20,22),
+	cardHov = Color3.fromRGB(26,26,28),
+	secBg   = Color3.fromRGB(17,17,19),
+	secHdr  = Color3.fromRGB(22,8,8),
+	border  = Color3.fromRGB(38,12,12),    borderL = Color3.fromRGB(55,18,18),
+	accent  = Color3.fromRGB(204,20,20),   accentHi= Color3.fromRGB(235,50,50),
+	txt1    = Color3.fromRGB(240,235,235), txt2=Color3.fromRGB(150,140,140),
+	txtM    = Color3.fromRGB(85,78,78),    txtA=Color3.fromRGB(225,75,75),
+	inBg    = Color3.fromRGB(15,13,13),    inBd=Color3.fromRGB(50,18,18),
+	togOn   = Color3.fromRGB(204,20,20),   togOff=Color3.fromRGB(44,40,40),
+	slBg    = Color3.fromRGB(38,28,28),    slFill=Color3.fromRGB(204,20,20),
+	btnP    = Color3.fromRGB(180,18,18),   btnPH=Color3.fromRGB(220,38,38),
+	btnS    = Color3.fromRGB(30,28,28),    btnSH=Color3.fromRGB(40,38,38),
+	-- active tab = full accent-dark bg (matching KOD style)
+	tabA    = Color3.fromRGB(180,18,18),   tabI=Color3.fromRGB(0,0,0),
+	tabHov  = Color3.fromRGB(28,10,10),
+	tabTxt  = Color3.fromRGB(255,255,255), tabTxtI=Color3.fromRGB(120,110,110),
+	notifBg = Color3.fromRGB(19,17,17),
+	divider = Color3.fromRGB(38,14,14),
+	online  = Color3.fromRGB(50,200,90),   offline=Color3.fromRGB(180,50,50),
+	secTxt  = Color3.fromRGB(204,20,20),
+	font    = Enum.Font.GothamSemibold,    fontB=Enum.Font.GothamBlack,
+	fontM   = Enum.Font.Code,
+	r       = UDim.new(0,5),
 }
 
--- â”€â”€â”€ Temas â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-local Themes = {
-        Red    = Color3.fromRGB(185, 0,   0),
-        Blue   = Color3.fromRGB(0,   100, 220),
-        Purple = Color3.fromRGB(140, 0,   255),
-        Green  = Color3.fromRGB(0,   155, 60),
-        Orange = Color3.fromRGB(220, 105, 0),
-        Pink   = Color3.fromRGB(210, 0,   140),
-        Cyan   = Color3.fromRGB(0,   170, 200),
-        White  = Color3.fromRGB(200, 200, 200),
+T.Dark = {
+	name="Dark",
+	bg=Color3.fromRGB(12,12,14), bgAlt=Color3.fromRGB(18,18,20),
+	sidebar=Color3.fromRGB(14,14,17), card=Color3.fromRGB(22,22,25),
+	cardHov=Color3.fromRGB(28,28,32),
+	secBg=Color3.fromRGB(19,19,22), secHdr=Color3.fromRGB(16,20,38),
+	border=Color3.fromRGB(36,36,44), borderL=Color3.fromRGB(52,52,62),
+	accent=Color3.fromRGB(80,142,255), accentHi=Color3.fromRGB(105,165,255),
+	txt1=Color3.fromRGB(238,240,248), txt2=Color3.fromRGB(148,150,162),
+	txtM=Color3.fromRGB(88,90,102), txtA=Color3.fromRGB(100,162,255),
+	inBg=Color3.fromRGB(15,15,18), inBd=Color3.fromRGB(44,44,56),
+	togOn=Color3.fromRGB(80,142,255), togOff=Color3.fromRGB(44,44,50),
+	slBg=Color3.fromRGB(28,28,38), slFill=Color3.fromRGB(80,142,255),
+	btnP=Color3.fromRGB(60,120,230), btnPH=Color3.fromRGB(80,145,255),
+	btnS=Color3.fromRGB(28,28,34), btnSH=Color3.fromRGB(38,38,46),
+	tabA=Color3.fromRGB(50,100,220), tabI=Color3.fromRGB(0,0,0),
+	tabHov=Color3.fromRGB(18,20,32),
+	tabTxt=Color3.fromRGB(255,255,255), tabTxtI=Color3.fromRGB(108,110,126),
+	notifBg=Color3.fromRGB(20,20,24),
+	divider=Color3.fromRGB(34,34,44),
+	online=Color3.fromRGB(50,200,90), offline=Color3.fromRGB(180,50,50),
+	secTxt=Color3.fromRGB(80,142,255),
+	font=Enum.Font.GothamSemibold, fontB=Enum.Font.GothamBlack,
+	fontM=Enum.Font.Code, r=UDim.new(0,5),
 }
 
--- â”€â”€â”€ Paleta dinÃ¡mica â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-local C = {
-        BG        = Color3.fromRGB(11,11,11),
-        Sidebar   = Color3.fromRGB(16,16,16),
-        Header    = Color3.fromRGB(13,13,13),
-        Section   = Color3.fromRGB(18,18,18),
-        Hover     = Color3.fromRGB(26,26,26),
-        Text      = Color3.fromRGB(238,238,238),
-        TextSub   = Color3.fromRGB(148,148,148),
-        TextDim   = Color3.fromRGB(72,72,72),
-        ToggleOff = Color3.fromRGB(50,50,50),
-        SliderBG  = Color3.fromRGB(36,36,36),
-        Success   = Color3.fromRGB(0,170,60),
-        Warning   = Color3.fromRGB(220,148,0),
-        Error     = Color3.fromRGB(210,28,28),
-        -- accent (calculados desde base)
-        Accent    = Color3.fromRGB(185,0,0),
-        AccentHov = Color3.fromRGB(210,22,22),
-        AccentDrk = Color3.fromRGB(92,0,0),
-        Border    = Color3.fromRGB(42,7,7),
+T.Neon = {
+	name="Neon",
+	bg=Color3.fromRGB(6,6,11), bgAlt=Color3.fromRGB(11,11,20),
+	sidebar=Color3.fromRGB(8,8,15), card=Color3.fromRGB(15,15,24),
+	cardHov=Color3.fromRGB(22,22,33),
+	secBg=Color3.fromRGB(12,12,22), secHdr=Color3.fromRGB(20,6,44),
+	border=Color3.fromRGB(22,6,52), borderL=Color3.fromRGB(48,10,98),
+	accent=Color3.fromRGB(162,0,255), accentHi=Color3.fromRGB(192,55,255),
+	txt1=Color3.fromRGB(228,218,255), txt2=Color3.fromRGB(148,138,178),
+	txtM=Color3.fromRGB(78,68,110), txtA=Color3.fromRGB(190,102,255),
+	inBg=Color3.fromRGB(10,8,19), inBd=Color3.fromRGB(48,14,98),
+	togOn=Color3.fromRGB(162,0,255), togOff=Color3.fromRGB(34,28,54),
+	slBg=Color3.fromRGB(30,22,48), slFill=Color3.fromRGB(162,0,255),
+	btnP=Color3.fromRGB(140,0,220), btnPH=Color3.fromRGB(175,50,255),
+	btnS=Color3.fromRGB(24,18,40), btnSH=Color3.fromRGB(34,26,56),
+	tabA=Color3.fromRGB(130,0,220), tabI=Color3.fromRGB(0,0,0),
+	tabHov=Color3.fromRGB(18,10,30),
+	tabTxt=Color3.fromRGB(255,255,255), tabTxtI=Color3.fromRGB(108,98,140),
+	notifBg=Color3.fromRGB(14,12,23),
+	divider=Color3.fromRGB(34,14,66),
+	online=Color3.fromRGB(50,255,150), offline=Color3.fromRGB(200,50,80),
+	secTxt=Color3.fromRGB(162,0,255),
+	font=Enum.Font.GothamSemibold, fontB=Enum.Font.GothamBlack,
+	fontM=Enum.Font.Code, r=UDim.new(0,5),
 }
 
-local function recalcAccent(base)
-        C.Accent    = base
-        C.AccentHov = base:Lerp(Color3.new(1,1,1), 0.14)
-        C.AccentDrk = base:Lerp(Color3.new(0,0,0), 0.50)
-        C.Border    = base:Lerp(Color3.new(0,0,0), 0.74)
-end
-
--- Registro de objetos acento para re-colorear en SetTheme
-local _acReg = {} -- {obj, prop, kind}  kind: "accent"|"accentHov"|"accentDrk"|"border"
-
--- Registro de elementos con Flag para sincronizar al cambiar perfil
-local _flagReg = {} -- {flag, setter, default}
-local function regFlag(flag, setter, default)
-        if not flag then return end
-        for _,e in ipairs(_flagReg) do
-                if e.flag==flag then e.setter=setter; return end
-        end
-        table.insert(_flagReg, {flag=flag, setter=setter, default=default})
-end
-
-local function regA(obj, prop, kind)
-        table.insert(_acReg, {o=obj, p=prop, k=kind or "accent"})
-        obj[prop] = (kind=="accentHov" and C.AccentHov) or (kind=="accentDrk" and C.AccentDrk) or (kind=="border" and C.Border) or C.Accent
-        return obj
-end
-
--- â”€â”€â”€ Assets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-local A = {
-        toggleBG   = "rbxassetid://18772190202",
-        toggleHead = "rbxassetid://18772309008",
-        sliderBar  = "rbxassetid://18772615246",
-        sliderHead = "rbxassetid://18772834246",
-        dropArrow  = "rbxassetid://18865373378",
-        libIcon    = "rbxassetid://72559578724301",
-        shadow     = "rbxassetid://6014261993",
-        closeIcon  = "rbxassetid://9886659671",
-        minIcon    = "rbxassetid://9886659505",
-        btnSlice   = "rbxassetid://9386394468",
-        searchIcon = Icons["search"] or "",
+T.Midnight = {
+	name="Midnight",
+	bg=Color3.fromRGB(8,10,20), bgAlt=Color3.fromRGB(12,15,28),
+	sidebar=Color3.fromRGB(10,12,22), card=Color3.fromRGB(16,20,35),
+	cardHov=Color3.fromRGB(22,28,46),
+	secBg=Color3.fromRGB(13,16,30), secHdr=Color3.fromRGB(14,20,46),
+	border=Color3.fromRGB(28,34,64), borderL=Color3.fromRGB(44,54,90),
+	accent=Color3.fromRGB(65,132,255), accentHi=Color3.fromRGB(90,160,255),
+	txt1=Color3.fromRGB(220,225,245), txt2=Color3.fromRGB(138,148,182),
+	txtM=Color3.fromRGB(78,88,120), txtA=Color3.fromRGB(100,165,255),
+	inBg=Color3.fromRGB(10,12,24), inBd=Color3.fromRGB(38,48,90),
+	togOn=Color3.fromRGB(65,132,255), togOff=Color3.fromRGB(34,38,70),
+	slBg=Color3.fromRGB(26,32,58), slFill=Color3.fromRGB(65,132,255),
+	btnP=Color3.fromRGB(50,110,230), btnPH=Color3.fromRGB(80,145,255),
+	btnS=Color3.fromRGB(22,26,48), btnSH=Color3.fromRGB(30,36,62),
+	tabA=Color3.fromRGB(45,100,210), tabI=Color3.fromRGB(0,0,0),
+	tabHov=Color3.fromRGB(14,18,38),
+	tabTxt=Color3.fromRGB(255,255,255), tabTxtI=Color3.fromRGB(108,118,158),
+	notifBg=Color3.fromRGB(14,18,32),
+	divider=Color3.fromRGB(28,36,70),
+	online=Color3.fromRGB(60,210,110), offline=Color3.fromRGB(190,60,60),
+	secTxt=Color3.fromRGB(65,132,255),
+	font=Enum.Font.GothamSemibold, fontB=Enum.Font.GothamBlack,
+	fontM=Enum.Font.Code, r=UDim.new(0,5),
 }
 
--- â”€â”€â”€ Helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-local function tw(o,p,t,s,d)
-        TweenService:Create(o,TweenInfo.new(t or 0.18,s or Enum.EasingStyle.Quart,d or Enum.EasingDirection.Out),p):Play()
-end
-local function corner(p,r) local c=Instance.new("UICorner") c.CornerRadius=UDim.new(0,r or 6) c.Parent=p return c end
-local function stroke(p,col,th) local s=Instance.new("UIStroke") s.ApplyStrokeMode=Enum.ApplyStrokeMode.Border s.Color=col or C.Border s.Thickness=th or 1 s.Parent=p return s end
-local function pad(p,t,r,b,l) local u=Instance.new("UIPadding") u.PaddingTop=UDim.new(0,t or 0) u.PaddingRight=UDim.new(0,r or 0) u.PaddingBottom=UDim.new(0,b or 0) u.PaddingLeft=UDim.new(0,l or 0) u.Parent=p end
-local function frm(par,bg,sz,pos,props)
-        local f=Instance.new("Frame") f.BackgroundColor3=bg or Color3.new() f.BackgroundTransparency=bg==nil and 1 or 0 f.BorderSizePixel=0
-        f.Size=sz or UDim2.new(1,0,1,0) f.Position=pos or UDim2.new()
-        if props then for k,v in pairs(props) do pcall(function() f[k]=v end) end end f.Parent=par return f
-end
-local function lbl(par,txt,sz,col,font,props)
-        local l=Instance.new("TextLabel") l.Text=txt or "" l.TextSize=sz or 13 l.TextColor3=col or C.Text l.Font=font or Enum.Font.Gotham
-        l.BackgroundTransparency=1 l.BorderSizePixel=0 l.TextXAlignment=Enum.TextXAlignment.Left l.TextYAlignment=Enum.TextYAlignment.Center l.RichText=true
-        if props then for k,v in pairs(props) do pcall(function() l[k]=v end) end end l.Parent=par return l
-end
-local function img(par,id,col,sz,pos,props)
-        local i=Instance.new("ImageLabel") i.Image=id or "" i.ImageColor3=col or Color3.new(1,1,1) i.BackgroundTransparency=1 i.BorderSizePixel=0
-        i.Size=sz or UDim2.fromOffset(16,16) i.Position=pos or UDim2.new()
-        if props then for k,v in pairs(props) do pcall(function() i[k]=v end) end end i.Parent=par return i
-end
-local function btn(par,props)
-        local b=Instance.new("TextButton") b.Text="" b.BackgroundTransparency=1 b.BorderSizePixel=0 b.AutoButtonColor=false b.Font=Enum.Font.Gotham b.TextSize=13
-        if props then for k,v in pairs(props) do pcall(function() b[k]=v end) end end b.Parent=par return b
-end
-local function shadow(par)
-        return img(par,A.shadow,Color3.new(0,0,0),UDim2.new(1,60,1,60),UDim2.new(0,-30,0,-30),{ZIndex=0,ScaleType=Enum.ScaleType.Slice,SliceCenter=Rect.new(49,49,450,450),ImageTransparency=0.6})
-end
-local function divLine(par,yOff)
-        local d=frm(par,C.Border,UDim2.new(1,-18,0,1),UDim2.new(0,9,0,yOff or 0))
-        d.BackgroundTransparency=0.45 return d
-end
-local function getIcon(k)
-        if not k then return nil end
-        if k:find("rbxassetid://") then return k end
-        return Icons[k:lower()]
+function T.get(n) return T[n] or T.Blood end
+function T.list() return {"Blood","Dark","Neon","Midnight"} end
+function T.merge(base,ov)
+	local r={}; for k,v in pairs(base) do r[k]=v end
+	for k,v in pairs(ov or {}) do r[k]=v end; return r
 end
 
--- â”€â”€â”€ Sistema de Notificaciones v2 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-local nGui = Instance.new("ScreenGui")
-nGui.Name = "BloodNotifs"; nGui.ResetOnSpawn = false
-nGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling; nGui.DisplayOrder = 2147483647
-pcall(function() nGui.Parent = gethui() end)
-if not nGui.Parent then nGui.Parent = LP:WaitForChild("PlayerGui") end
+-- ─── Window ───────────────────────────────────────────────────────────────────
+local Win={}; Win.__index=Win
 
--- Config global de notificaciones
-local NConfig = {
-        Position   = "bottom-right", -- "top-right"|"top-left"|"bottom-right"|"bottom-left"|"top-center"|"bottom-center"
-        MaxVisible = 5,              -- mÃ¡ximo de notifs visibles al mismo tiempo
-        Width      = 300,
-        Padding    = 10,
-}
-local _nQueue   = {}  -- cola de notificaciones pendientes
-local _nActive  = 0   -- cuÃ¡ntas estÃ¡n visibles ahora
+function Win.new(opts, th, lib)
+	local self=setmetatable({},Win)
+	self.lib=lib; self.theme=th; self.min=false
+	local title  = opts.Title    or "BLOOD LIBRARY"
+	local logo   = opts.Logo     or "rbxassetid://72559578724301"
+	local sub    = opts.Subtitle or "BLOOD HUB"
+	local sz     = opts.Size     or UDim2.new(0,780,0,530)
+	local drag   = opts.Draggable~=false
+	self.fullSize = sz
 
--- Calcula posiciÃ³n y direcciÃ³n del holder segÃºn NConfig.Position
-local function calcHolderProps()
-        local p, w, pad2 = NConfig.Position, NConfig.Width, NConfig.Padding
-        local ancX, ancY, posX, posY, listVAlign, listHAlign
-        if     p == "top-right"     then ancX,ancY=1,0; posX=UDim2.new(1,-(w+pad2),0,0);         listVAlign=Enum.VerticalAlignment.Top
-        elseif p == "top-left"      then ancX,ancY=0,0; posX=UDim2.new(0,pad2,0,0);              listVAlign=Enum.VerticalAlignment.Top
-        elseif p == "bottom-left"   then ancX,ancY=0,1; posX=UDim2.new(0,pad2,1,0);              listVAlign=Enum.VerticalAlignment.Bottom
-        elseif p == "top-center"    then ancX,ancY=0.5,0; posX=UDim2.new(0.5,-(w//2),0,0);       listVAlign=Enum.VerticalAlignment.Top
-        elseif p == "bottom-center" then ancX,ancY=0.5,1; posX=UDim2.new(0.5,-(w//2),1,0);       listVAlign=Enum.VerticalAlignment.Bottom
-        else                              ancX,ancY=1,1; posX=UDim2.new(1,-(w+pad2),1,0);         listVAlign=Enum.VerticalAlignment.Bottom
-        end
-        return posX, UDim2.new(0,w,1,0), Vector2.new(ancX,ancY), listVAlign
+	-- ScreenGui
+	local sg=Instance.new("ScreenGui")
+	sg.Name="BloodLib"; sg.ResetOnSpawn=false
+	sg.ZIndexBehavior=Enum.ZIndexBehavior.Sibling; sg.IgnoreGuiInset=true
+	pcall(function() sg.Parent=game:GetService("CoreGui") end)
+	if not sg.Parent then sg.Parent=PL.LocalPlayer:WaitForChild("PlayerGui") end
+	self.sg=sg
+
+	-- Drop shadow
+	U.new("ImageLabel",{Name="Shadow",
+		Size=UDim2.new(0,sz.X.Offset+60,0,sz.Y.Offset+60),
+		Position=UDim2.new(0.5,-(sz.X.Offset+60)/2,0.5,-(sz.Y.Offset+60)/2),
+		BackgroundTransparency=1,Image="rbxassetid://6015897843",
+		ImageColor3=Color3.new(0,0,0),ImageTransparency=0.55,
+		ScaleType=Enum.ScaleType.Slice,SliceCenter=Rect.new(49,49,450,450),
+		ZIndex=1,Parent=sg})
+
+	-- Main container
+	local main=U.new("Frame",{Name="Main",
+		Size=UDim2.new(0,0,0,0),
+		Position=UDim2.new(0.5,-sz.X.Offset/2,0.5,-sz.Y.Offset/2),
+		BackgroundColor3=th.bg,BorderSizePixel=0,
+		ClipsDescendants=false,ZIndex=2,Parent=sg})
+	U.corner(main,th.r); U.stroke(main,th.border,1)
+	self.main=main
+	U.tw(main,U.SP,{Size=sz})
+
+	local sw = U.mobile() and 130 or 168
+
+	-- ── Sidebar ────────────────────────────────────────────────────────────────
+	local sb=U.new("Frame",{Name="Sidebar",Size=UDim2.new(0,sw,1,0),
+		BackgroundColor3=th.sidebar,BorderSizePixel=0,ZIndex=3,Parent=main})
+	U.corner(sb,th.r)
+	-- Square off right corners
+	U.new("Frame",{Size=UDim2.new(0,th.r.Offset*2,1,0),Position=UDim2.new(1,-th.r.Offset*2,0,0),
+		BackgroundColor3=th.sidebar,BorderSizePixel=0,ZIndex=3,Parent=sb})
+	-- Right separator
+	U.new("Frame",{Size=UDim2.new(0,1,1,0),Position=UDim2.new(1,0,0,0),
+		BackgroundColor3=th.border,BorderSizePixel=0,ZIndex=4,Parent=sb})
+	self.sb=sb
+
+	-- Logo zone (bigger, matching KOD style)
+	local lz=U.new("Frame",{Name="Logo",Size=UDim2.new(1,0,0,110),
+		BackgroundTransparency=1,ZIndex=4,Parent=sb})
+	-- Logo image (large, centered)
+	if logo~="" then
+		U.new("ImageLabel",{Size=UDim2.new(0,80,0,56),Position=UDim2.new(0.5,-40,0,10),
+			BackgroundTransparency=1,Image=logo,ZIndex=5,Parent=lz})
+	end
+	-- Title text below logo
+	U.new("TextLabel",{Size=UDim2.new(1,0,0,18),
+		Position=UDim2.new(0,0,0,logo~="" and 70 or 14),
+		BackgroundTransparency=1,Text=title,TextColor3=th.accent,
+		Font=th.fontB,TextSize=15,TextXAlignment=Enum.TextXAlignment.Center,ZIndex=5,Parent=lz})
+	U.new("TextLabel",{Size=UDim2.new(1,0,0,13),
+		Position=UDim2.new(0,0,0,logo~="" and 89 or 32),
+		BackgroundTransparency=1,Text=sub,TextColor3=th.txtM,
+		Font=th.font,TextSize=10,TextXAlignment=Enum.TextXAlignment.Center,ZIndex=5,Parent=lz})
+	-- Divider under logo
+	U.new("Frame",{Size=UDim2.new(1,-14,0,1),Position=UDim2.new(0,7,1,-1),
+		BackgroundColor3=th.border,BorderSizePixel=0,ZIndex=4,Parent=lz})
+
+	-- Tab scroll
+	local tabScroll=U.new("ScrollingFrame",{Name="Tabs",
+		Size=UDim2.new(1,0,1,-160),Position=UDim2.new(0,0,0,110),
+		BackgroundTransparency=1,BorderSizePixel=0,ScrollBarThickness=0,
+		CanvasSize=UDim2.new(0,0,0,0),AutomaticCanvasSize=Enum.AutomaticSize.Y,
+		ZIndex=4,Parent=sb})
+	U.list(tabScroll,Enum.FillDirection.Vertical,2)
+	U.pad(tabScroll,6,6,6,6)
+	self.tabScroll=tabScroll
+
+	-- Profile zone (bottom of sidebar)
+	local pz=U.new("Frame",{Name="Profile",Size=UDim2.new(1,0,0,50),
+		Position=UDim2.new(0,0,1,-50),BackgroundColor3=th.bgAlt,
+		BorderSizePixel=0,ZIndex=4,Parent=sb})
+	U.new("Frame",{Size=UDim2.new(1,0,0,1),BackgroundColor3=th.border,
+		BorderSizePixel=0,ZIndex=3,Parent=pz})
+	self:_buildProfile(pz,th)
+
+	-- ── Right pane ─────────────────────────────────────────────────────────────
+	local rp=U.new("Frame",{Name="Right",Size=UDim2.new(1,-sw,1,0),
+		Position=UDim2.new(0,sw,0,0),BackgroundColor3=th.bg,
+		BorderSizePixel=0,ZIndex=3,Parent=main})
+	self.rp=rp
+
+	-- Top bar (search + controls)
+	local tb=U.new("Frame",{Name="TopBar",Size=UDim2.new(1,0,0,44),
+		BackgroundColor3=th.bgAlt,BorderSizePixel=0,ZIndex=5,Parent=rp})
+	U.new("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,0),
+		BackgroundColor3=th.border,BorderSizePixel=0,ZIndex=5,Parent=tb})
+	self.tb=tb
+
+	-- Search bar (KOD style – left aligned in topbar)
+	local sf=U.new("Frame",{Name="Search",Size=UDim2.new(1,-70,0,28),
+		Position=UDim2.new(0,10,0.5,-14),BackgroundColor3=th.inBg,
+		BorderSizePixel=0,ZIndex=6,Parent=tb})
+	U.corner(sf,th.r); U.stroke(sf,th.inBd,1)
+	U.new("ImageLabel",{Size=UDim2.new(0,13,0,13),Position=UDim2.new(0,7,0.5,-6),
+		BackgroundTransparency=1,Image="rbxassetid://3926305904",
+		ImageColor3=th.txtM,ZIndex=7,Parent=sf})
+	local sb2=U.new("TextBox",{Size=UDim2.new(1,-28,1,-2),Position=UDim2.new(0,26,0,1),
+		BackgroundTransparency=1,Text="",PlaceholderText="Buscar...",
+		TextColor3=th.txt1,PlaceholderColor3=th.txtM,Font=th.font,TextSize=11,
+		TextXAlignment=Enum.TextXAlignment.Left,ClearTextOnFocus=false,ZIndex=7,Parent=sf})
+	self.sb2=sb2
+
+	-- Minimize / Close buttons
+	local minB=U.new("TextButton",{Size=UDim2.new(0,22,0,22),Position=UDim2.new(1,-50,0.5,-11),
+		BackgroundColor3=th.btnS,BorderSizePixel=0,Text="—",TextColor3=th.txt2,
+		Font=th.fontB,TextSize=11,AutoButtonColor=false,ZIndex=6,Parent=tb})
+	U.corner(minB,UDim.new(1,0))
+	minB.MouseEnter:Connect(function() U.tw(minB,U.F,{BackgroundColor3=th.btnSH,TextColor3=th.txt1}) end)
+	minB.MouseLeave:Connect(function() U.tw(minB,U.F,{BackgroundColor3=th.btnS,TextColor3=th.txt2}) end)
+	minB.MouseButton1Click:Connect(function() self:toggleMin() end)
+
+	local clB=U.new("TextButton",{Size=UDim2.new(0,22,0,22),Position=UDim2.new(1,-24,0.5,-11),
+		BackgroundColor3=th.accent,BorderSizePixel=0,Text="x",TextColor3=Color3.new(1,1,1),
+		Font=th.fontB,TextSize=11,AutoButtonColor=false,ZIndex=6,Parent=tb})
+	U.corner(clB,UDim.new(1,0))
+	clB.MouseEnter:Connect(function() U.tw(clB,U.F,{BackgroundColor3=th.accentHi}) end)
+	clB.MouseLeave:Connect(function() U.tw(clB,U.F,{BackgroundColor3=th.accent}) end)
+	clB.MouseButton1Click:Connect(function() self:close() end)
+
+	-- Page header (title + subtitle, below topbar)
+	local ph=U.new("Frame",{Size=UDim2.new(1,0,0,46),Position=UDim2.new(0,0,0,44),
+		BackgroundTransparency=1,ZIndex=5,Parent=rp})
+	U.pad(ph,8,14,0,14)
+	self.pgTitle=U.new("TextLabel",{Size=UDim2.new(1,0,0,22),Position=UDim2.new(0,0,0,0),
+		BackgroundTransparency=1,Text="Main",TextColor3=th.txt1,Font=th.fontB,
+		TextSize=18,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6,Parent=ph})
+	self.pgSub=U.new("TextLabel",{Size=UDim2.new(1,0,0,14),Position=UDim2.new(0,0,0,24),
+		BackgroundTransparency=1,Text="",TextColor3=th.txtA,Font=th.font,
+		TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6,Parent=ph})
+
+	-- Content scroll
+	local cs=U.new("ScrollingFrame",{Name="Scroll",
+		Size=UDim2.new(1,0,1,-112),Position=UDim2.new(0,0,0,90),
+		BackgroundTransparency=1,BorderSizePixel=0,
+		ScrollBarThickness=3,ScrollBarImageColor3=th.accent,
+		CanvasSize=UDim2.new(0,0,0,0),ZIndex=4,Parent=rp})
+	self.cs=cs
+
+	-- Status bar (bottom, matching KOD style)
+	local stB=U.new("Frame",{Name="Status",Size=UDim2.new(1,0,0,22),
+		Position=UDim2.new(0,0,1,-22),BackgroundColor3=th.bgAlt,
+		BorderSizePixel=0,ZIndex=5,Parent=rp})
+	U.new("Frame",{Size=UDim2.new(1,0,0,1),BackgroundColor3=th.border,
+		BorderSizePixel=0,ZIndex=5,Parent=stB})
+	self.stLabel=U.new("TextLabel",{Size=UDim2.new(1,0,1,0),
+		BackgroundTransparency=1,
+		Text="BLOOD LIBRARY  v1.0  •  Premium Version",
+		TextColor3=th.accent,Font=th.font,TextSize=9,
+		TextXAlignment=Enum.TextXAlignment.Center,ZIndex=6,Parent=stB})
+
+	if drag then U.drag(main,tb); U.drag(main,lz) end
+
+	-- Search filtering
+	sb2:GetPropertyChangedSignal("Text"):Connect(function()
+		self:_filter(sb2.Text:lower())
+	end)
+
+	return self
 end
 
-local nPos, nSz, nAnc, nVAlign = calcHolderProps()
-local nHolder = frm(nGui, nil, nSz, nPos, {AnchorPoint=nAnc})
-pad(nHolder, NConfig.Padding, 0, NConfig.Padding, 0)
-local nList = Instance.new("UIListLayout")
-nList.SortOrder = Enum.SortOrder.LayoutOrder
-nList.VerticalAlignment = nVAlign
-nList.Padding = UDim.new(0,6)
-nList.Parent = nHolder
+function Win:_buildProfile(zone, th)
+	local pl=PL.LocalPlayer
+	local av=U.new("Frame",{Size=UDim2.new(0,32,0,32),Position=UDim2.new(0,8,0.5,-16),
+		BackgroundColor3=th.accent,BorderSizePixel=0,ZIndex=5,Parent=zone})
+	U.corner(av,UDim.new(1,0))
+	local img=Instance.new("ImageLabel")
+	img.Size=UDim2.new(1,0,1,0); img.BackgroundTransparency=1
+	img.Image="https://www.roblox.com/headshot-thumbnail/image?userId="..pl.UserId.."&width=48&height=48&format=png"
+	img.ZIndex=6; U.corner(img,UDim.new(1,0)); img.Parent=av
 
-local function dismissCard(card, onDone)
-        tw(card, {Size=UDim2.new(1,0,0,0), BackgroundTransparency=1}, 0.2,
-                Enum.EasingStyle.Quart, Enum.EasingDirection.In)
-        task.delay(0.22, function()
-                pcall(function() card:Destroy() end)
-                _nActive = math.max(0, _nActive - 1)
-                if onDone then pcall(onDone) end
-        end)
+	U.new("TextLabel",{Size=UDim2.new(1,-52,0,15),Position=UDim2.new(0,46,0,9),
+		BackgroundTransparency=1,Text=pl.DisplayName or pl.Name,
+		TextColor3=th.txt1,Font=th.fontB,TextSize=11,
+		TextXAlignment=Enum.TextXAlignment.Left,TextTruncate=Enum.TextTruncate.AtEnd,
+		ZIndex=5,Parent=zone})
+	U.new("TextLabel",{Size=UDim2.new(1,-52,0,12),Position=UDim2.new(0,46,0,25),
+		BackgroundTransparency=1,Text="Premium",TextColor3=th.accent,
+		Font=th.fontB,TextSize=9,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=5,Parent=zone})
+
+	-- Green connected dot + label at very bottom
+	local dot=U.new("Frame",{Size=UDim2.new(0,5,0,5),Position=UDim2.new(0,8,1,2),
+		BackgroundColor3=th.online,BorderSizePixel=0,ZIndex=5,Parent=zone})
+	U.corner(dot,UDim.new(1,0))
+	U.new("TextLabel",{Size=UDim2.new(1,-20,0,10),Position=UDim2.new(0,16,1,1),
+		BackgroundTransparency=1,Text="Conectado",TextColor3=th.online,
+		Font=th.font,TextSize=8,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=5,Parent=zone})
 end
 
-local function spawnCard(o)
-        if _nActive >= NConfig.MaxVisible then
-                -- descartar la mÃ¡s antigua (primer hijo Frame)
-                for _,ch in ipairs(nHolder:GetChildren()) do
-                        if ch:IsA("Frame") then dismissCard(ch); break end
-                end
-        end
-        _nActive = _nActive + 1
-
-        local ac = (o.Type=="success" and C.Success) or (o.Type=="warning" and C.Warning)
-                    or (o.Type=="error" and C.Error) or o.Color or C.Accent
-        local dur = tonumber(o.Duration) or 5
-        local ic  = o.Icon or
-                    (o.Type=="success" and Icons["checkcircle"])  or
-                    (o.Type=="warning" and Icons["alerttriangle"]) or
-                    (o.Type=="error"   and Icons["alertcircle"])   or Icons["bell"]
-
-        -- Altura base: tÃ­tulo+texto; mÃ¡s alta si hay botones de acciÃ³n
-        local hasActions = o.Actions and #o.Actions > 0
-        local baseH = (o.Text and o.Text~="" and 60 or 44)
-        local cardH = hasActions and (baseH + 36) or baseH
-
-        local card = frm(nHolder, Color3.fromRGB(14,14,14),
-                UDim2.new(1,0,0,0), nil,
-                {ClipsDescendants=true, LayoutOrder=-math.floor(tick()*1000)})
-        corner(card,9)
-        local sk = stroke(card, ac, 1); sk.Transparency = 0.45
-
-        -- Barra lateral de color
-        local sideBar = frm(card, ac, UDim2.new(0,3,1,0))
-
-        -- Icono
-        img(card, ic, ac, UDim2.fromOffset(17,17), UDim2.new(0,12,0,12))
-
-        -- BotÃ³n X para cerrar
-        local closeB = btn(card, {Size=UDim2.fromOffset(18,18), Position=UDim2.new(1,-22,0,5), ZIndex=6})
-        img(closeB, A.closeIcon, C.TextDim, UDim2.fromOffset(10,10), UDim2.new(0.5,-5,0.5,-5))
-        closeB.MouseEnter:Connect(function() tw(closeB:FindFirstChildWhichIsA("ImageLabel"),{ImageColor3=C.Text},0.1) end)
-        closeB.MouseLeave:Connect(function() tw(closeB:FindFirstChildWhichIsA("ImageLabel"),{ImageColor3=C.TextDim},0.1) end)
-        closeB.MouseButton1Click:Connect(function() dismissCard(card) end)
-
-        -- TÃ­tulo
-        lbl(card, o.Title or "Blood", 13, C.Text, Enum.Font.GothamBold,
-                {Size=UDim2.new(1,-54,0,16), Position=UDim2.new(0,34,0,8)})
-
-        -- Texto (solo si existe)
-        if o.Text and o.Text ~= "" then
-                lbl(card, tostring(o.Text), 11, C.TextSub, nil,
-                        {Size=UDim2.new(1,-54,0,14), Position=UDim2.new(0,34,0,26), TextWrapped=true,
-                         TextTruncate=Enum.TextTruncate.None})
-        end
-
-        -- Botones de acciÃ³n (ej: {"Deshacer", fn}, {"Ver mÃ¡s", fn})
-        if hasActions then
-                local actRow = frm(card, nil, UDim2.new(1,-14,0,28), UDim2.new(0,7,0,baseH+4), {BackgroundTransparency=1})
-                local actList = Instance.new("UIListLayout"); actList.FillDirection=Enum.FillDirection.Horizontal
-                actList.Padding=UDim.new(0,6); actList.VerticalAlignment=Enum.VerticalAlignment.Center; actList.Parent=actRow
-                for _,act in ipairs(o.Actions) do
-                        local aLabel = type(act)=="table" and act[1] or tostring(act)
-                        local aCb    = type(act)=="table" and act[2] or function() end
-                        local aB = Instance.new("ImageButton")
-                        aB.Image=A.btnSlice; aB.ScaleType=Enum.ScaleType.Slice; aB.SliceCenter=Rect.new(4,4,12,12)
-                        aB.ImageColor3=ac; aB.BackgroundColor3=ac
-                        aB.BackgroundTransparency=0; aB.BorderSizePixel=0; aB.AutoButtonColor=false
-                        aB.Size=UDim2.new(0,0,1,0); aB.AutomaticSize=Enum.AutomaticSize.X
-                        aB.Parent=actRow; corner(aB,5)
-                        local aTxt=lbl(aB, aLabel, 11, Color3.new(1,1,1), Enum.Font.GothamSemibold,
-                                {Size=UDim2.new(0,0,1,0), AutomaticSize=Enum.AutomaticSize.X,
-                                 TextXAlignment=Enum.TextXAlignment.Center})
-                        pad(aB,0,10,0,10)
-                        aB.MouseEnter:Connect(function() tw(aB,{ImageColor3=ac:Lerp(Color3.new(1,1,1),0.15),BackgroundColor3=ac:Lerp(Color3.new(1,1,1),0.15)},0.1) end)
-                        aB.MouseLeave:Connect(function() tw(aB,{ImageColor3=ac,BackgroundColor3=ac},0.1) end)
-                        aB.MouseButton1Click:Connect(function()
-                                pcall(aCb); dismissCard(card)
-                        end)
-                end
-        end
-
-        -- Barra de progreso
-        local bar = frm(card, ac, UDim2.new(1,0,0,2), UDim2.new(0,0,1,-2))
-        bar.BackgroundTransparency = 0.3
-
-        -- Animar entrada
-        tw(card, {Size=UDim2.new(1,0,0,cardH)}, 0.28, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
-        -- Barra de progreso
-        tw(bar, {Size=UDim2.new(0,0,0,2)}, dur, Enum.EasingStyle.Linear, Enum.EasingDirection.In)
-        -- Auto-dismiss
-        task.delay(dur, function()
-                dismissCard(card)
-        end)
-
-        return card
+function Win:_filter(q)
+	if not self.cs then return end
+	for _,cf in ipairs(self.cs:GetChildren()) do
+		if not cf:IsA("Frame") then continue end
+		-- cf is the grid frame per tab
+		for _,col in ipairs(cf:GetChildren()) do
+			if not col:IsA("Frame") then continue end
+			for _,sec in ipairs(col:GetChildren()) do
+				if not sec:IsA("Frame") then continue end
+				for _,row in ipairs(sec:GetChildren()) do
+					if not row:IsA("Frame") then continue end
+					if q=="" then row.Visible=true; continue end
+					local found=false
+					for _,lbl in ipairs(row:GetDescendants()) do
+						if lbl:IsA("TextLabel") and lbl.Text:lower():find(q,1,true) then
+							found=true; break
+						end
+					end
+					row.Visible=found
+				end
+			end
+		end
+	end
 end
 
-local function Notify(o)
-        task.spawn(spawnCard, o)
+function Win:toggleMin()
+	self.min=not self.min
+	if self.min then
+		self.rp.Visible=false
+		U.tw(self.main,U.M,{Size=UDim2.new(0,self.sb.AbsoluteSize.X,0,self.main.AbsoluteSize.Y)})
+	else
+		self.rp.Visible=true
+		U.tw(self.main,U.M,{Size=self.fullSize})
+	end
 end
 
--- â”€â”€â”€ LibrerÃ­a principal â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-local Lib = {}
-Lib.__index  = Lib
-Lib.Icons    = Icons
-Lib.Themes   = Themes
-Lib.Flags    = {}
-Lib.Version  = "5.0"
-Lib.ConfigFolder = "BloodLibrary"
-
-Lib.Notify  = function(_,o)     Notify(o) end
-Lib.Success = function(_,t,x,d) Notify({Title=t,Text=x,Duration=d,Type="success"}) end
-Lib.Warning = function(_,t,x,d) Notify({Title=t,Text=x,Duration=d,Type="warning"}) end
-Lib.Error   = function(_,t,x,d) Notify({Title=t,Text=x,Duration=d,Type="error"})   end
-
--- SetTheme â€” cambia el acento de toda la UI en tiempo real
-function Lib:SetTheme(t)
-        local base
-        if type(t)=="string" then base=Themes[t] or Themes.Red
-        elseif typeof(t)=="Color3" then base=t
-        else return end
-        recalcAccent(base)
-        for _,e in ipairs(_acReg) do
-                pcall(function()
-                        e.o[e.p] = (e.k=="accentHov" and C.AccentHov) or (e.k=="accentDrk" and C.AccentDrk) or (e.k=="border" and C.Border) or C.Accent
-                end)
-        end
+function Win:close()
+	U.tw(self.main,U.M,{Size=UDim2.new(0,0,0,0)})
+	task.delay(0.32,function() self.sg:Destroy() end)
 end
 
-function Lib:GetThemes() return Themes end
-function Lib:AddTheme(name,col) Themes[name]=col end
-
-function Lib:SaveConfig(name)
-        pcall(function()
-                if not isfolder(self.ConfigFolder) then makefolder(self.ConfigFolder) end
-                writefile(self.ConfigFolder.."/"..tostring(name or "default")..".json",HttpService:JSONEncode(self.Flags))
-        end)
-end
-function Lib:LoadConfig(name)
-        pcall(function()
-                local path=self.ConfigFolder.."/"..tostring(name or "default")..".json"
-                if isfile(path) then
-                        local d=HttpService:JSONDecode(readfile(path))
-                        for k,v in pairs(d) do self.Flags[k]=v end
-                end
-        end)
+function Win:setTitle(t,s)
+	self.pgTitle.Text=t
+	if s then self.pgSub.Text=s end
 end
 
--- â”€â”€â”€ Auto-guardado â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-Lib._autoSaveThread = nil
-Lib._autoSaveActive = false
+function Win:setVisible(v) self.main.Visible=v end
 
-function Lib:EnableAutoSave(o)
-        o = o or {}
-        local file     = tostring(o.File     or "autosave")
-        local interval = tonumber(o.Interval or 30)
-        local silent   = o.Silent ~= false   -- notificaciÃ³n de guardado (default: silencioso al guardar, pero sÃ­ al cargar)
-        local folder   = o.Folder or self.ConfigFolder
-        local onLoad   = o.OnLoad or function() end
-        local onSave   = o.OnSave or function() end
-        local path     = folder.."/"..file..".json"
+-- ─── Elements ─────────────────────────────────────────────────────────────────
+-- Elements render inside a section container (self.cont = section's inner list frame)
+-- Each element is a full-width row card.
 
-        -- Auto-carga al iniciar si el archivo existe
-        local loaded = false
-        pcall(function()
-                if isfile(path) then
-                        local d = HttpService:JSONDecode(readfile(path))
-                        for k,v in pairs(d) do self.Flags[k]=v end
-                        loaded = true
-                end
-        end)
-        if loaded then
-                if not o.Silent then
-                        Notify({Title="Config cargada",Text="Auto-guardado '"..file.."' restaurado.",Type="success",Duration=3})
-                end
-                pcall(onLoad, file)
-        end
+local E={}; E.__index=E
 
-        -- Detener cualquier loop anterior
-        self:DisableAutoSave()
-        self._autoSaveActive = true
-
-        -- Loop de guardado
-        self._autoSaveThread = task.spawn(function()
-                local saveCount = 0
-                while self._autoSaveActive do
-                        task.wait(interval)
-                        if not self._autoSaveActive then break end
-                        local ok = pcall(function()
-                                if not isfolder(folder) then makefolder(folder) end
-                                writefile(path, HttpService:JSONEncode(self.Flags))
-                        end)
-                        if ok then
-                                saveCount = saveCount + 1
-                                if o.Verbose then
-                                        Notify({Title="Auto-guardado",Text="Config '"..file.."' guardada. ("..saveCount.."x)",Type="success",Duration=2})
-                                end
-                                pcall(onSave, file, saveCount)
-                        end
-                end
-        end)
-
-        -- Guardar tambiÃ©n al salir del juego
-        game:BindToClose(function()
-                if self._autoSaveActive then
-                        pcall(function()
-                                if not isfolder(folder) then makefolder(folder) end
-                                writefile(path, HttpService:JSONEncode(self.Flags))
-                        end)
-                end
-        end)
-
-        return self
+local function rowCard(th, parent, h, autoY)
+	local f=U.new("Frame",{
+		Size=autoY and UDim2.new(1,0,0,0) or UDim2.new(1,0,0,h or 46),
+		BackgroundTransparency=1,
+		AutomaticSize=autoY and Enum.AutomaticSize.Y or Enum.AutomaticSize.None,
+		ZIndex=10,Parent=parent})
+	return f
 end
 
-function Lib:DisableAutoSave()
-        self._autoSaveActive = false
-        if self._autoSaveThread then
-                pcall(function() task.cancel(self._autoSaveThread) end)
-                self._autoSaveThread = nil
-        end
+-- ── Toggle (KOD style: title + desc left, pill right) ─────────────────────────
+function E:Toggle(o)
+	o=o or{}; local th=self.theme; local on=o.Default==true
+	local row=rowCard(th,self.cont,46)
+
+	U.new("TextLabel",{Size=UDim2.new(1,-62,0,16),Position=UDim2.new(0,0,0,6),
+		BackgroundTransparency=1,Text=o.Text or "Toggle",TextColor3=th.txt1,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	if o.Description and o.Description~="" then
+		U.new("TextLabel",{Size=UDim2.new(1,-62,0,12),Position=UDim2.new(0,0,0,24),
+			BackgroundTransparency=1,Text=o.Description,TextColor3=th.txt2,
+			Font=th.font,TextSize=10,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	end
+
+	local pill=U.new("Frame",{Size=UDim2.new(0,42,0,22),Position=UDim2.new(1,-44,0.5,-11),
+		BackgroundColor3=on and th.togOn or th.togOff,BorderSizePixel=0,ZIndex=12,Parent=row})
+	U.corner(pill,UDim.new(1,0))
+
+	local knob=U.new("Frame",{Size=UDim2.new(0,18,0,18),
+		Position=on and UDim2.new(1,-20,0.5,-9) or UDim2.new(0,2,0.5,-9),
+		BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=13,Parent=pill})
+	U.corner(knob,UDim.new(1,0))
+
+	local hit=U.new("TextButton",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+		Text="",ZIndex=14,Parent=row})
+
+	local function refresh(anim)
+		local bg=on and th.togOn or th.togOff
+		local kp=on and UDim2.new(1,-20,0.5,-9) or UDim2.new(0,2,0.5,-9)
+		if anim then U.tw(pill,U.F,{BackgroundColor3=bg}); U.tw(knob,U.F,{Position=kp})
+		else pill.BackgroundColor3=bg; knob.Position=kp end
+	end
+
+	hit.MouseButton1Click:Connect(function()
+		on=not on; refresh(true)
+		if o.Callback then pcall(o.Callback,on) end
+	end)
+	refresh(false)
+	return {Instance=row, GetValue=function() return on end, SetValue=function(v) on=v; refresh(true) end}
 end
 
-function Lib:IsAutoSaving()
-        return self._autoSaveActive
+-- ── Slider (KOD style: title + desc, value right, full-width track) ───────────
+function E:Slider(o)
+	o=o or{}; local th=self.theme
+	local mn=o.Min or 0; local mx=o.Max or 100
+	local val=U.clamp(o.Default or mn,mn,mx); local suf=o.Suffix or ""
+
+	local h=(o.Description and o.Description~="") and 64 or 52
+	local row=rowCard(th,self.cont,h)
+
+	-- Top row: title left, value right
+	U.new("TextLabel",{Size=UDim2.new(1,-52,0,16),Position=UDim2.new(0,0,0,4),
+		BackgroundTransparency=1,Text=o.Text or "Slider",TextColor3=th.txt1,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	if o.Description and o.Description~="" then
+		U.new("TextLabel",{Size=UDim2.new(1,-52,0,11),Position=UDim2.new(0,0,0,21),
+			BackgroundTransparency=1,Text=o.Description,TextColor3=th.txt2,
+			Font=th.font,TextSize=9,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	end
+
+	-- Value box (KOD style: bordered box top-right)
+	local vBox=U.new("Frame",{Size=UDim2.new(0,46,0,18),Position=UDim2.new(1,-46,0,3),
+		BackgroundColor3=th.inBg,BorderSizePixel=0,ZIndex=12,Parent=row})
+	U.corner(vBox,th.r); U.stroke(vBox,th.inBd,1)
+	local vL=U.new("TextLabel",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+		Text=tostring(val)..suf,TextColor3=th.txt1,Font=th.fontB,TextSize=10,ZIndex=13,Parent=vBox})
+
+	-- Track (full width, near bottom of row)
+	local tY=(o.Description and o.Description~="") and 46 or 34
+	local track=U.new("Frame",{Size=UDim2.new(1,0,0,4),Position=UDim2.new(0,0,0,tY),
+		BackgroundColor3=th.slBg,BorderSizePixel=0,ZIndex=12,Parent=row})
+	U.corner(track,UDim.new(1,0))
+
+	local fill=U.new("Frame",{Size=UDim2.new((val-mn)/(mx-mn),0,1,0),
+		BackgroundColor3=th.slFill,BorderSizePixel=0,ZIndex=13,Parent=track})
+	U.corner(fill,UDim.new(1,0))
+
+	local knob=U.new("Frame",{Size=UDim2.new(0,12,0,12),
+		Position=UDim2.new((val-mn)/(mx-mn),-6,0.5,-6),
+		BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=14,Parent=track})
+	U.corner(knob,UDim.new(1,0))
+
+	local hit=U.new("TextButton",{Size=UDim2.new(1,0,0,22),Position=UDim2.new(0,0,0.5,-11),
+		BackgroundTransparency=1,Text="",ZIndex=15,Parent=track})
+
+	local drg=false
+	local function setV(nx)
+		local p=U.clamp(nx,0,1)
+		val=U.round(mn+(mx-mn)*p)
+		fill.Size=UDim2.new(p,0,1,0); knob.Position=UDim2.new(p,-6,0.5,-6)
+		vL.Text=tostring(val)..suf
+	end
+	hit.MouseButton1Down:Connect(function() drg=true end)
+	UIS.InputEnded:Connect(function(i)
+		if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then
+			if drg then drg=false; if o.Callback then pcall(o.Callback,val) end end
+		end
+	end)
+	UIS.InputChanged:Connect(function(i)
+		if not drg then return end
+		if i.UserInputType~=Enum.UserInputType.MouseMovement and i.UserInputType~=Enum.UserInputType.Touch then return end
+		local a=track.AbsoluteSize.X; if a==0 then return end
+		setV((i.Position.X-track.AbsolutePosition.X)/a)
+	end)
+	setV((val-mn)/(mx-mn))
+	return {Instance=row, GetValue=function() return val end,
+		SetValue=function(v) setV((U.clamp(v,mn,mx)-mn)/(mx-mn)) end}
 end
 
--- â”€â”€â”€ Sistema de Perfiles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-Lib._activeProfile  = nil
-Lib._profileFolder  = "BloodLibrary/Profiles"
-Lib._profileChanged = nil  -- callback
+-- ── Button (KOD style: title + desc left, button right) ───────────────────────
+function E:Button(o)
+	o=o or{}; local th=self.theme
+	local row=rowCard(th,self.cont,46)
 
-local function profilePath(folder, name)
-        return folder.."/"..name..".json"
+	U.new("TextLabel",{Size=UDim2.new(1,-90,0,16),Position=UDim2.new(0,0,0,6),
+		BackgroundTransparency=1,Text=o.Text or "Button",TextColor3=th.txt1,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	if o.Description and o.Description~="" then
+		U.new("TextLabel",{Size=UDim2.new(1,-90,0,12),Position=UDim2.new(0,0,0,24),
+			BackgroundTransparency=1,Text=o.Description,TextColor3=th.txt2,
+			Font=th.font,TextSize=10,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	end
+
+	local eb=U.new("TextButton",{Size=UDim2.new(0,76,0,28),Position=UDim2.new(1,-78,0.5,-14),
+		BackgroundColor3=th.btnP,BorderSizePixel=0,
+		Text=o.ButtonText or "Ejecutar",TextColor3=Color3.new(1,1,1),
+		Font=th.fontB,TextSize=11,AutoButtonColor=false,ZIndex=12,Parent=row})
+	U.corner(eb,th.r)
+
+	eb.MouseEnter:Connect(function() U.tw(eb,U.F,{BackgroundColor3=th.btnPH}) end)
+	eb.MouseLeave:Connect(function() U.tw(eb,U.F,{BackgroundColor3=th.btnP}) end)
+	eb.MouseButton1Click:Connect(function()
+		U.tw(eb,TweenInfo.new(0.07),{Size=UDim2.new(0,70,0,26)})
+		task.delay(0.1,function() U.tw(eb,TweenInfo.new(0.12),{Size=UDim2.new(0,76,0,28)}) end)
+		if o.Callback then pcall(o.Callback) end
+	end)
+	return {Instance=row}
 end
 
-function Lib:SetProfileFolder(f)
-        self._profileFolder = f
+-- ── Textbox ───────────────────────────────────────────────────────────────────
+function E:Textbox(o)
+	o=o or{}; local th=self.theme
+	local row=rowCard(th,self.cont,52)
+	U.new("TextLabel",{Size=UDim2.new(1,-16,0,15),Position=UDim2.new(0,0,0,4),
+		BackgroundTransparency=1,Text=o.Text or "Input",TextColor3=th.txt1,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	local iBg=U.new("Frame",{Size=UDim2.new(1,0,0,24),Position=UDim2.new(0,0,0,24),
+		BackgroundColor3=th.inBg,BorderSizePixel=0,ZIndex=12,Parent=row})
+	U.corner(iBg,th.r); local sk=U.stroke(iBg,th.inBd,1)
+	local box=U.new("TextBox",{Size=UDim2.new(1,-16,1,0),Position=UDim2.new(0,8,0,0),
+		BackgroundTransparency=1,Text=o.Default or "",
+		PlaceholderText=o.Placeholder or "Escribe aqui...",
+		TextColor3=th.txt1,PlaceholderColor3=th.txtM,Font=th.font,TextSize=11,
+		TextXAlignment=Enum.TextXAlignment.Left,ClearTextOnFocus=false,ZIndex=13,Parent=iBg})
+	box.Focused:Connect(function() U.tw(sk,U.F,{Color=th.accent}) end)
+	box.FocusLost:Connect(function(enter)
+		U.tw(sk,U.F,{Color=th.inBd})
+		if o.Callback then pcall(o.Callback,box.Text,enter) end
+	end)
+	return {Instance=row, GetValue=function() return box.Text end, SetValue=function(v) box.Text=v end}
 end
 
-function Lib:ListProfiles()
-        local out = {}
-        pcall(function()
-                if not isfolder(self._profileFolder) then makefolder(self._profileFolder) end
-                for _,f in ipairs(listfiles(self._profileFolder)) do
-                        local n = f:match("([^/\\]+)%.json$")
-                        if n then table.insert(out, n) end
-                end
-        end)
-        return out
+-- ── Dropdown ──────────────────────────────────────────────────────────────────
+function E:Dropdown(o)
+	o=o or{}; local th=self.theme
+	local items=o.Items or{}; local multi=o.Multi or false
+	local sel=multi and {} or (o.Default or nil); local open=false
+	if multi then for _,v in ipairs(o.Default or {}) do sel[v]=true end end
+
+	local wrap=U.new("Frame",{Size=UDim2.new(1,0,0,42),
+		BackgroundTransparency=1,ClipsDescendants=false,ZIndex=20,Parent=self.cont})
+
+	U.new("TextLabel",{Size=UDim2.new(1,-80,0,42),Position=UDim2.new(0,0,0,0),
+		BackgroundTransparency=1,Text=o.Text or "Dropdown",TextColor3=th.txt1,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=21,Parent=wrap})
+	local selL=U.new("TextLabel",{Size=UDim2.new(0,70,0,42),Position=UDim2.new(1,-92,0,0),
+		BackgroundTransparency=1,Text=multi and "0 sel." or (sel or "Elegir"),
+		TextColor3=th.txtA,Font=th.font,TextSize=11,
+		TextXAlignment=Enum.TextXAlignment.Right,ZIndex=21,Parent=wrap})
+	U.new("TextLabel",{Size=UDim2.new(0,18,0,42),Position=UDim2.new(1,-18,0,0),
+		BackgroundTransparency=1,Text="v",TextColor3=th.txtM,
+		Font=th.fontB,TextSize=12,ZIndex=21,Parent=wrap})
+
+	-- Separator line (KOD uses simple lines under dropdowns)
+	U.new("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,-1),
+		BackgroundColor3=th.border,BorderSizePixel=0,ZIndex=20,Parent=wrap})
+
+	local panel=U.new("Frame",{Size=UDim2.new(1,0,0,0),Position=UDim2.new(0,0,1,0),
+		BackgroundColor3=th.bgAlt,BorderSizePixel=0,ClipsDescendants=true,ZIndex=25,Parent=wrap})
+	U.corner(panel,th.r); U.stroke(panel,th.borderL,1)
+
+	local iScroll=U.new("ScrollingFrame",{Size=UDim2.new(1,-8,1,-4),
+		Position=UDim2.new(0,4,0,4),BackgroundTransparency=1,BorderSizePixel=0,
+		ScrollBarThickness=2,ScrollBarImageColor3=th.accent,
+		CanvasSize=UDim2.new(0,0,0,0),AutomaticCanvasSize=Enum.AutomaticSize.Y,
+		ZIndex=26,Parent=panel})
+	U.list(iScroll,nil,2)
+
+	local iBtns={}
+	local function updateSel()
+		if multi then
+			local n=0; for _,v in pairs(sel) do if v then n+=1 end end
+			selL.Text=n==0 and "0 sel." or n.." sel."
+		else selL.Text=sel or "Elegir" end
+	end
+	local function rebuild()
+		for _,b in ipairs(iBtns) do b:Destroy() end; iBtns={}
+		for _,item in ipairs(items) do
+			local s=tostring(item)
+			local act=multi and sel[item] or (sel==item)
+			local row2=U.new("TextButton",{Size=UDim2.new(1,0,0,26),
+				BackgroundColor3=act and th.btnP or th.card,
+				BorderSizePixel=0,Text=s,
+				TextColor3=act and Color3.new(1,1,1) or th.txt1,
+				Font=th.font,TextSize=11,AutoButtonColor=false,ZIndex=27,Parent=iScroll})
+			U.corner(row2,UDim.new(0,3))
+			row2.MouseEnter:Connect(function()
+				if not(multi and sel[item] or sel==item) then U.tw(row2,U.F,{BackgroundColor3=th.cardHov}) end
+			end)
+			row2.MouseLeave:Connect(function()
+				local a=multi and sel[item] or sel==item
+				U.tw(row2,U.F,{BackgroundColor3=a and th.btnP or th.card})
+			end)
+			row2.MouseButton1Click:Connect(function()
+				if multi then
+					sel[item]=not sel[item]
+					row2.BackgroundColor3=sel[item] and th.btnP or th.card
+					row2.TextColor3=sel[item] and Color3.new(1,1,1) or th.txt1
+				else
+					sel=item
+					for _,b in ipairs(iBtns) do b.BackgroundColor3=th.card; b.TextColor3=th.txt1 end
+					row2.BackgroundColor3=th.btnP; row2.TextColor3=Color3.new(1,1,1)
+				end
+				updateSel()
+				if o.Callback then
+					if multi then
+						local l={}; for k,v in pairs(sel) do if v then table.insert(l,k) end end
+						pcall(o.Callback,l)
+					else pcall(o.Callback,sel) end
+				end
+			end)
+			table.insert(iBtns,row2)
+		end
+	end
+	rebuild()
+
+	local panH=math.min(#items*28+6,170)
+	local hitB=U.new("TextButton",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+		Text="",ZIndex=22,Parent=wrap})
+	hitB.MouseButton1Click:Connect(function()
+		open=not open
+		local ph=open and panH or 0
+		U.tw(panel,U.M,{Size=UDim2.new(1,0,0,ph)})
+		U.tw(wrap,U.M,{Size=UDim2.new(1,0,0,open and 42+ph or 42)})
+	end)
+	updateSel()
+	return {Instance=wrap,
+		GetValue=function()
+			if multi then local l={}; for k,v in pairs(sel) do if v then table.insert(l,k) end end; return l end
+			return sel
+		end,
+		SetValue=function(v) sel=v; updateSel() end}
 end
 
-function Lib:SaveProfile(name)
-        name = tostring(name or self._activeProfile or "Perfil A"):gsub("[^%w_%-]","_")
-        pcall(function()
-                if not isfolder(self._profileFolder) then makefolder(self._profileFolder) end
-                writefile(profilePath(self._profileFolder, name), HttpService:JSONEncode(self.Flags))
-        end)
+-- ── Keybind ───────────────────────────────────────────────────────────────────
+function E:Keybind(o)
+	o=o or{}; local th=self.theme
+	local key=o.Default or Enum.KeyCode.Unknown; local listening=false
+	local row=rowCard(th,self.cont,42)
+	U.new("TextLabel",{Size=UDim2.new(1,-100,0,42),Position=UDim2.new(0,0,0,0),
+		BackgroundTransparency=1,Text=o.Text or "Tecla",TextColor3=th.txt1,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=12,Parent=row})
+	local badge=U.new("TextButton",{Size=UDim2.new(0,82,0,26),Position=UDim2.new(1,-84,0.5,-13),
+		BackgroundColor3=th.btnS,BorderSizePixel=0,
+		Text=key==Enum.KeyCode.Unknown and "Ninguna" or key.Name,
+		TextColor3=th.txtA,Font=th.fontB,TextSize=10,
+		AutoButtonColor=false,ZIndex=12,Parent=row})
+	U.corner(badge,th.r); U.stroke(badge,th.inBd,1)
+	badge.MouseButton1Click:Connect(function()
+		listening=true; badge.Text="..."; badge.TextColor3=th.accent
+		U.tw(badge,U.F,{BackgroundColor3=th.btnSH})
+	end)
+	UIS.InputBegan:Connect(function(i,p)
+		if p then return end
+		if listening then
+			listening=false; key=i.KeyCode; badge.Text=key.Name
+			badge.TextColor3=th.txtA; U.tw(badge,U.F,{BackgroundColor3=th.btnS})
+			if o.Callback then pcall(o.Callback,key) end
+		elseif i.KeyCode==key then
+			if o.Callback then pcall(o.Callback,key) end
+		end
+	end)
+	return {Instance=row, GetValue=function() return key end, SetValue=function(k) key=k; badge.Text=k.Name end}
 end
 
-function Lib:LoadProfile(name)
-        name = tostring(name):gsub("[^%w_%-]","_")
-        local loaded = false
-        pcall(function()
-                local path = profilePath(self._profileFolder, name)
-                if isfile(path) then
-                        local d = HttpService:JSONDecode(readfile(path))
-                        for k,v in pairs(d) do self.Flags[k]=v end
-                        loaded = true
-                end
-        end)
-        return loaded
+-- ── ColorPicker ───────────────────────────────────────────────────────────────
+function E:ColorPicker(o)
+	o=o or{}; local th=self.theme
+	local col=o.Default or Color3.fromRGB(204,20,20)
+	local h,s,v=Color3.toHSV(col); h=h*360; local open=false
+
+	local wrap=U.new("Frame",{Size=UDim2.new(1,0,0,42),
+		BackgroundTransparency=1,ClipsDescendants=false,ZIndex=20,Parent=self.cont})
+
+	U.new("TextLabel",{Size=UDim2.new(1,-54,0,42),Position=UDim2.new(0,0,0,0),
+		BackgroundTransparency=1,Text=o.Text or "Color",TextColor3=th.txt1,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=21,Parent=wrap})
+	local prev=U.new("Frame",{Size=UDim2.new(0,28,0,20),Position=UDim2.new(1,-32,0.5,-10),
+		BackgroundColor3=col,BorderSizePixel=0,ZIndex=21,Parent=wrap})
+	U.corner(prev,th.r); U.stroke(prev,th.borderL,1)
+
+	local panel=U.new("Frame",{Size=UDim2.new(1,0,0,0),Position=UDim2.new(0,0,1,2),
+		BackgroundColor3=th.card,BorderSizePixel=0,ClipsDescendants=true,ZIndex=25,Parent=wrap})
+	U.corner(panel,th.r); U.stroke(panel,th.border,1)
+
+	local sva=U.new("Frame",{Size=UDim2.new(1,-10,0,86),Position=UDim2.new(0,5,0,5),
+		BackgroundColor3=Color3.fromHSV(h/360,1,1),BorderSizePixel=0,
+		ClipsDescendants=true,ZIndex=26,Parent=panel})
+	U.corner(sva,th.r)
+	U.new("UIGradient",{
+		Transparency=NumberSequence.new({NumberSequenceKeypoint.new(0,0),NumberSequenceKeypoint.new(1,1)}),
+		Parent=sva})
+	local bov=U.new("Frame",{Size=UDim2.new(1,0,1,0),BackgroundColor3=Color3.new(0,0,0),ZIndex=27,Parent=sva})
+	U.new("UIGradient",{
+		Color=ColorSequence.new({ColorSequenceKeypoint.new(0,Color3.new(0,0,0)),ColorSequenceKeypoint.new(1,Color3.new(0,0,0))}),
+		Transparency=NumberSequence.new({NumberSequenceKeypoint.new(0,1),NumberSequenceKeypoint.new(1,0)}),
+		Parent=bov})
+	local svK=U.new("Frame",{Size=UDim2.new(0,9,0,9),Position=UDim2.new(s,-4,1-v,-4),
+		BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=29,Parent=sva})
+	U.corner(svK,UDim.new(1,0)); U.stroke(svK,Color3.new(0,0,0),1)
+	local svH=U.new("TextButton",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,Text="",ZIndex=30,Parent=sva})
+
+	local hBar=U.new("Frame",{Size=UDim2.new(1,-10,0,10),Position=UDim2.new(0,5,0,95),
+		BackgroundColor3=Color3.fromRGB(128,128,128),BorderSizePixel=0,ZIndex=26,Parent=panel})
+	U.corner(hBar,UDim.new(1,0))
+	local hK2={}; for i=0,1,1/6 do table.insert(hK2,ColorSequenceKeypoint.new(i,Color3.fromHSV(i,1,1))) end
+	table.insert(hK2,ColorSequenceKeypoint.new(1,Color3.fromHSV(1,1,1)))
+	U.new("UIGradient",{Color=ColorSequence.new(hK2),Parent=hBar})
+	local hKnob=U.new("Frame",{Size=UDim2.new(0,7,0,14),Position=UDim2.new(h/360,-3,0.5,-7),
+		BackgroundColor3=Color3.new(1,1,1),BorderSizePixel=0,ZIndex=27,Parent=hBar})
+	U.corner(hKnob,UDim.new(0,3)); U.stroke(hKnob,Color3.new(0,0,0),1)
+	local hHit=U.new("TextButton",{Size=UDim2.new(1,0,0,20),Position=UDim2.new(0,0,0.5,-10),
+		BackgroundTransparency=1,Text="",ZIndex=28,Parent=hBar})
+
+	local hexF=U.new("Frame",{Size=UDim2.new(1,-10,0,20),Position=UDim2.new(0,5,0,110),
+		BackgroundColor3=th.inBg,ZIndex=26,Parent=panel})
+	U.corner(hexF,th.r); U.stroke(hexF,th.inBd,1)
+	local hexL=U.new("TextLabel",{Size=UDim2.new(1,-12,1,0),Position=UDim2.new(0,6,0,0),
+		BackgroundTransparency=1,Text=U.hex(col),TextColor3=th.txtA,
+		Font=th.fontM,TextSize=10,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=27,Parent=hexF})
+
+	local function upd()
+		col=Color3.fromHSV(h/360,s,v); prev.BackgroundColor3=col
+		sva.BackgroundColor3=Color3.fromHSV(h/360,1,1)
+		svK.Position=UDim2.new(s,-4,1-v,-4); hKnob.Position=UDim2.new(h/360,-3,0.5,-7)
+		hexL.Text=U.hex(col)
+		if o.Callback then pcall(o.Callback,col) end
+	end
+
+	local svDrag=false; svH.MouseButton1Down:Connect(function() svDrag=true end)
+	UIS.InputEnded:Connect(function(i)
+		if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then svDrag=false end
+	end)
+	UIS.InputChanged:Connect(function(i)
+		if not svDrag then return end
+		if i.UserInputType~=Enum.UserInputType.MouseMovement and i.UserInputType~=Enum.UserInputType.Touch then return end
+		local as=sva.AbsoluteSize; if as.X==0 or as.Y==0 then return end
+		s=U.clamp((i.Position.X-sva.AbsolutePosition.X)/as.X,0,1)
+		v=1-U.clamp((i.Position.Y-sva.AbsolutePosition.Y)/as.Y,0,1); upd()
+	end)
+	local hueDrag=false; hHit.MouseButton1Down:Connect(function() hueDrag=true end)
+	UIS.InputEnded:Connect(function(i)
+		if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then hueDrag=false end
+	end)
+	UIS.InputChanged:Connect(function(i)
+		if not hueDrag then return end
+		if i.UserInputType~=Enum.UserInputType.MouseMovement and i.UserInputType~=Enum.UserInputType.Touch then return end
+		local a=hBar.AbsoluteSize.X; if a==0 then return end
+		h=U.clamp((i.Position.X-hBar.AbsolutePosition.X)/a,0,1)*360; upd()
+	end)
+
+	local hitP=U.new("TextButton",{Size=UDim2.new(0,36,0,28),Position=UDim2.new(1,-38,0.5,-14),
+		BackgroundTransparency=1,Text="",ZIndex=22,Parent=wrap})
+	hitP.MouseButton1Click:Connect(function()
+		open=not open; local ph=open and 136 or 0
+		U.tw(panel,U.M,{Size=UDim2.new(1,0,0,ph)})
+		U.tw(wrap,U.M,{Size=UDim2.new(1,0,0,open and 42+ph+2 or 42)})
+	end)
+	return {Instance=wrap, GetValue=function() return col end,
+		SetValue=function(nc) col=nc; h,s,v=Color3.toHSV(nc); h=h*360; upd() end}
 end
 
-function Lib:DeleteProfile(name)
-        name = tostring(name):gsub("[^%w_%-]","_")
-        pcall(function() delfile(profilePath(self._profileFolder, name)) end)
+-- ── Label ─────────────────────────────────────────────────────────────────────
+function E:Label(o)
+	o=o or{}; local th=self.theme
+	local row=rowCard(th,self.cont,28)
+	local lbl=U.new("TextLabel",{Size=UDim2.new(1,0,1,0),Position=UDim2.new(0,0,0,0),
+		BackgroundTransparency=1,Text=o.Text or "",TextColor3=th.txt2,Font=th.font,
+		TextSize=11,TextXAlignment=Enum.TextXAlignment.Left,RichText=true,ZIndex=12,Parent=row})
+	return {Instance=row, GetValue=function() return lbl.Text end, SetValue=function(v) lbl.Text=v end}
 end
 
--- SetProfile: guarda el perfil actual, carga el nuevo y actualiza toda la UI
-function Lib:SetProfile(name, silent)
-        name = tostring(name):gsub("[^%w_%-]","_")
-        -- guardar perfil anterior si existe
-        if self._activeProfile then
-                self:SaveProfile(self._activeProfile)
-        end
-        self._activeProfile = name
-        -- crear perfil vacÃ­o si no existe
-        local existed = self:LoadProfile(name)
-        if not existed then
-                -- inicializar con los defaults de cada flag registrado
-                for _,e in ipairs(_flagReg) do
-                        if self.Flags[e.flag]==nil then self.Flags[e.flag]=e.default end
-                end
-        end
-        -- sincronizar todos los elementos de UI con los nuevos valores
-        for _,e in ipairs(_flagReg) do
-                local v = self.Flags[e.flag]
-                if v~=nil then pcall(e.setter, v) end
-        end
-        if not silent then
-                Notify({Title="Perfil cargado", Text="Perfil '"..name.."' activo.", Type="success", Duration=2.5})
-        end
-        if self._profileChanged then pcall(self._profileChanged, name) end
+-- ── Paragraph ─────────────────────────────────────────────────────────────────
+function E:Paragraph(o)
+	o=o or{}; local th=self.theme
+	local row=rowCard(th,self.cont,0,true)
+	local lay=Instance.new("UIListLayout")
+	lay.SortOrder=Enum.SortOrder.LayoutOrder; lay.Padding=UDim.new(0,3); lay.Parent=row
+	if o.Title then
+		U.new("TextLabel",{Size=UDim2.new(1,0,0,14),BackgroundTransparency=1,
+			Text=o.Title,TextColor3=th.txtA,Font=th.fontB,TextSize=11,
+			TextXAlignment=Enum.TextXAlignment.Left,LayoutOrder=1,ZIndex=12,Parent=row})
+	end
+	local body=U.new("TextLabel",{Size=UDim2.new(1,0,0,0),BackgroundTransparency=1,
+		Text=o.Text or "",TextColor3=th.txt2,Font=th.font,TextSize=11,
+		TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true,
+		AutomaticSize=Enum.AutomaticSize.Y,LayoutOrder=2,RichText=true,ZIndex=12,Parent=row})
+	return {Instance=row, GetValue=function() return body.Text end, SetValue=function(v) body.Text=v end}
 end
 
-function Lib:GetProfile()
-        return self._activeProfile
+-- ── Divider ───────────────────────────────────────────────────────────────────
+function E:Divider(o)
+	o=o or{}; local th=self.theme
+	local hasTxt=o.Text and o.Text~=""
+	local f=U.new("Frame",{Size=UDim2.new(1,0,0,hasTxt and 22 or 10),
+		BackgroundTransparency=1,ZIndex=10,Parent=self.cont})
+	U.new("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,0.5,0),
+		BackgroundColor3=th.divider,BorderSizePixel=0,ZIndex=10,Parent=f})
+	if hasTxt then
+		U.new("TextLabel",{Size=UDim2.new(0,0,1,0),Position=UDim2.new(0,0,0,0),
+			BackgroundTransparency=1,AutomaticSize=Enum.AutomaticSize.X,
+			Text=o.Text,TextColor3=th.txtM,Font=th.fontB,TextSize=9,ZIndex=11,Parent=f})
+	end
+	return f
 end
 
-function Lib:OnProfileChanged(fn)
-        self._profileChanged = fn
+-- ─── Notifications ────────────────────────────────────────────────────────────
+local Notif={}; Notif.__index=Notif
+
+function Notif.new(sg, th)
+	local self=setmetatable({},Notif); self.th=th; self.n=0
+	self.cont=U.new("Frame",{Name="Toasts",Size=UDim2.new(0,290,1,-20),
+		Position=UDim2.new(1,-300,0,10),BackgroundTransparency=1,ZIndex=500,Parent=sg})
+	U.list(self.cont,nil,8)
+	U.pad(self.cont,10,0,0,0)
+	return self
 end
 
--- â”€â”€â”€ CreateWindow â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-function Lib:CreateWindow(o)
-        o=o or {}
-        local win={_tabs={},_active=nil,_visible=true,_key=o.ToggleKey or Enum.KeyCode.RightShift}
-        local WSZ=o.Size or UDim2.fromOffset(790,500)
-
-        local gui=Instance.new("ScreenGui") gui.Name=o.Name or "BloodLibrary" gui.ResetOnSpawn=false gui.ZIndexBehavior=Enum.ZIndexBehavior.Sibling gui.DisplayOrder=2147483646
-        pcall(function() gui.Parent=gethui() end)
-        if not gui.Parent then gui.Parent=LP:WaitForChild("PlayerGui") end
-        win._gui=gui
-
-        -- Base
-        local base=frm(gui,C.BG,WSZ,o.Position or UDim2.fromScale(0.5,0.5),{AnchorPoint=Vector2.new(0.5,0.5),ClipsDescendants=false})
-        corner(base,10)
-        local baseSk=stroke(base,C.Border,1); regA(baseSk,"Color","border")
-        shadow(base)
-        base.Size=UDim2.new(WSZ.X.Scale,WSZ.X.Offset,0,0); base.BackgroundTransparency=1
-
-        -- â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        local sb=frm(base,C.Sidebar,UDim2.new(0,170,1,0)); sb.ClipsDescendants=true; corner(sb,10)
-        frm(sb,C.Sidebar,UDim2.new(0,10,1,0),UDim2.new(1,-10,0,0))
-        frm(sb,C.Border,UDim2.new(0,1,1,0),UDim2.new(1,-1,0,0))
-
-        local sbH=frm(sb,Color3.fromRGB(12,12,12),UDim2.new(1,0,0,78))
-        frm(sbH,C.Border,UDim2.new(1,0,0,1),UDim2.new(0,0,1,-1))
-
-        local logoBox=frm(sbH,C.Accent,UDim2.fromOffset(40,40),UDim2.new(0,12,0,12)); corner(logoBox,9)
-        regA(logoBox,"BackgroundColor3")
-        img(logoBox,A.libIcon,Color3.new(1,1,1),UDim2.new(1,-6,1,-6),UDim2.new(0,3,0,3),{ScaleType=Enum.ScaleType.Fit})
-
-        lbl(sbH,o.Title or "Blood Library",13,C.Text,Enum.Font.GothamBold,{Size=UDim2.new(1,-64,0,18),Position=UDim2.new(0,60,0,14)})
-        lbl(sbH,o.Subtitle or "v"..Lib.Version,11,C.TextSub,nil,{Size=UDim2.new(1,-64,0,14),Position=UDim2.new(0,60,0,36)})
-
-        -- Tabs scroll en sidebar
-        local tabSc=Instance.new("ScrollingFrame"); tabSc.BackgroundTransparency=1; tabSc.BorderSizePixel=0
-        tabSc.Size=UDim2.new(1,0,1,-78); tabSc.Position=UDim2.new(0,0,0,78)
-        tabSc.CanvasSize=UDim2.new(0,0,0,0); tabSc.AutomaticCanvasSize=Enum.AutomaticSize.Y
-        tabSc.ScrollBarThickness=2; tabSc.ElasticBehavior=Enum.ElasticBehavior.Never; tabSc.Parent=sb
-        local tabScSk=Instance.new("UIScrollBarImageLabel",tabSc) pcall(function() tabSc.ScrollBarImageColor3=C.AccentDrk end)
-        pad(tabSc,6,8,6,8)
-        local tabList=Instance.new("UIListLayout"); tabList.SortOrder=Enum.SortOrder.LayoutOrder; tabList.Padding=UDim.new(0,2); tabList.Parent=tabSc
-
-        -- Footer sidebar
-        local sbFoot=frm(sb,Color3.fromRGB(12,12,12),UDim2.new(1,0,0,46),UDim2.new(0,0,1,-46))
-        frm(sbFoot,C.Border,UDim2.new(1,0,0,1))
-        local dotOn=frm(sbFoot,C.Success,UDim2.fromOffset(8,8),UDim2.new(0,12,0.5,-4)); corner(dotOn,4)
-        lbl(sbFoot,LP.DisplayName or LP.Name,12,C.Text,Enum.Font.GothamSemibold,{Size=UDim2.new(1,-26,0,16),Position=UDim2.new(0,26,0,6)})
-        lbl(sbFoot,"Conectado",10,C.TextSub,nil,{Size=UDim2.new(1,-26,0,12),Position=UDim2.new(0,26,0,24)})
-
-        -- â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        local hdr=frm(base,C.Header,UDim2.new(1,-170,0,48),UDim2.new(0,170,0,0))
-        frm(hdr,C.Border,UDim2.new(1,0,0,1),UDim2.new(0,0,1,-1))
-        local hTabName=lbl(hdr,"",16,C.Text,Enum.Font.GothamBold,{Size=UDim2.new(0,200,1,0),Position=UDim2.new(0,14,0,0)})
-
-        -- Search
-        local srchF=frm(hdr,Color3.fromRGB(18,18,18),UDim2.fromOffset(168,28),UDim2.new(1,-290,0.5,-14)); corner(srchF,6); stroke(srchF,C.Border,1)
-        img(srchF,A.searchIcon,C.TextDim,UDim2.fromOffset(12,12),UDim2.new(0,7,0.5,-6))
-        local srchBox=Instance.new("TextBox"); srchBox.PlaceholderText="Buscar..." srchBox.Text="" srchBox.TextSize=11 srchBox.Font=Enum.Font.Gotham srchBox.TextColor3=C.Text srchBox.PlaceholderColor3=C.TextDim srchBox.BackgroundTransparency=1 srchBox.BorderSizePixel=0 srchBox.Size=UDim2.new(1,-26,1,0) srchBox.Position=UDim2.new(0,24,0,0) srchBox.ClearTextOnFocus=false srchBox.Parent=srchF
-
-        -- BotÃ³n Minimizar
-        local minF=frm(hdr,Color3.fromRGB(20,20,20),UDim2.fromOffset(32,32),UDim2.new(1,-76,0.5,-16)); corner(minF,7); stroke(minF,C.Border,1)
-        img(minF,A.minIcon,C.TextSub,UDim2.fromOffset(14,14),UDim2.new(0.5,-7,0.5,-7))
-        local minHit=btn(minF,{Size=UDim2.new(1,0,1,0),ZIndex=5})
-        minHit.MouseEnter:Connect(function() tw(minF,{BackgroundColor3=Color3.fromRGB(30,30,30)},0.1) end)
-        minHit.MouseLeave:Connect(function() tw(minF,{BackgroundColor3=Color3.fromRGB(20,20,20)},0.1) end)
-
-        -- BotÃ³n Cerrar
-        local closeF=frm(hdr,C.Accent,UDim2.fromOffset(32,32),UDim2.new(1,-36,0.5,-16)); corner(closeF,7)
-        regA(closeF,"BackgroundColor3")
-        img(closeF,A.closeIcon,Color3.new(1,1,1),UDim2.fromOffset(14,14),UDim2.new(0.5,-7,0.5,-7))
-        local closeHit=btn(closeF,{Size=UDim2.new(1,0,1,0),ZIndex=5})
-        closeHit.MouseEnter:Connect(function() tw(closeF,{BackgroundColor3=C.AccentHov},0.1) end)
-        closeHit.MouseLeave:Connect(function() tw(closeF,{BackgroundColor3=C.Accent},0.1) end)
-        closeHit.MouseButton1Click:Connect(function()
-                tw(base,{Size=UDim2.new(WSZ.X.Scale,WSZ.X.Offset,0,0),BackgroundTransparency=1},0.22)
-                task.wait(0.25); pcall(function() gui:Destroy() end)
-        end)
-
-        -- Ãrea de contenido
-        local content=frm(base,nil,UDim2.new(1,-180,1,-58),UDim2.new(0,175,0,53))
-
-        -- â”€â”€ BotÃ³n flotante (reabrir) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        local fBtn=frm(gui,C.Accent,UDim2.fromOffset(46,46),UDim2.new(0,12,0.5,-23)); fBtn.Visible=false; corner(fBtn,12)
-        regA(fBtn,"BackgroundColor3"); shadow(fBtn)
-        img(fBtn,A.libIcon,Color3.new(1,1,1),UDim2.new(1,-8,1,-8),UDim2.new(0,4,0,4),{ScaleType=Enum.ScaleType.Fit})
-        local fHit=btn(fBtn,{Size=UDim2.new(1,0,1,0),ZIndex=5})
-        fHit.MouseEnter:Connect(function() tw(fBtn,{BackgroundColor3=C.AccentHov},0.12) end)
-        fHit.MouseLeave:Connect(function() tw(fBtn,{BackgroundColor3=C.Accent},0.12) end)
-
-        do -- drag floatBtn
-                local fd,fs,fp=false
-                fBtn.InputBegan:Connect(function(i)
-                        if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then fd=true; fs=i.Position; fp=fBtn.Position end
-                end)
-                UserInputService.InputChanged:Connect(function(i)
-                        if fd and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
-                                local d=i.Position-fs; fBtn.Position=UDim2.new(fp.X.Scale,fp.X.Offset+d.X,fp.Y.Scale,fp.Y.Offset+d.Y)
-                        end
-                end)
-                UserInputService.InputEnded:Connect(function(i)
-                        if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then fd=false end
-                end)
-        end
-        fHit.MouseButton1Click:Connect(function()
-                win._mini=false; base.Visible=true; fBtn.Visible=false
-                tw(base,{Size=WSZ,BackgroundTransparency=0},0.28)
-        end)
-
-        minHit.MouseButton1Click:Connect(function()
-                win._mini=not win._mini
-                if win._mini then
-                        tw(base,{Size=UDim2.new(WSZ.X.Scale,WSZ.X.Offset,0,0),BackgroundTransparency=1},0.22)
-                        task.wait(0.25); base.Visible=false; fBtn.Visible=true
-                else
-                        base.Visible=true; fBtn.Visible=false
-                        tw(base,{Size=WSZ,BackgroundTransparency=0},0.28)
-                end
-        end)
-
-        do -- drag window
-                local dd,ds,dp=false
-                hdr.InputBegan:Connect(function(i)
-                        if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then dd=true; ds=i.Position; dp=base.Position end
-                end)
-                UserInputService.InputChanged:Connect(function(i)
-                        if dd and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
-                                local d=i.Position-ds; base.Position=UDim2.new(dp.X.Scale,dp.X.Offset+d.X,dp.Y.Scale,dp.Y.Offset+d.Y)
-                        end
-                end)
-                UserInputService.InputEnded:Connect(function(i)
-                        if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then dd=false end
-                end)
-        end
-
-        UserInputService.InputBegan:Connect(function(i,gp)
-                if gp then return end
-                if i.KeyCode==win._key then
-                        win._visible=not win._visible
-                        if win._visible then base.Visible=true; fBtn.Visible=false; tw(base,{BackgroundTransparency=0,Size=WSZ},0.22)
-                        else tw(base,{BackgroundTransparency=1,Size=UDim2.new(WSZ.X.Scale,WSZ.X.Offset,0,0)},0.18); task.wait(0.2); base.Visible=false end
-                end
-        end)
-
-        task.defer(function() tw(base,{Size=WSZ,BackgroundTransparency=0},0.35) end)
-
-        function win:Destroy()
-                tw(base,{Size=UDim2.new(WSZ.X.Scale,WSZ.X.Offset,0,0),BackgroundTransparency=1},0.22)
-                task.wait(0.25); pcall(function() gui:Destroy() end); pcall(function() fBtn:Destroy() end)
-        end
-
-        -- â”€â”€ AddTab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-        function win:AddTab(o2)    return self:CreateTab(o2) end
-        function win:CreateTab(o2)
-                o2=o2 or {}
-                local tab={_sections={},_elements={},_order=#win._tabs+1}
-
-                local tBtn=frm(tabSc,Color3.fromRGB(22,22,22),UDim2.new(1,0,0,38),nil,{BackgroundTransparency=1,LayoutOrder=tab._order})
-                corner(tBtn,7)
-                local tBar=frm(tBtn,C.Accent,UDim2.new(0,3,0.5,0),UDim2.new(0,0,0.25,0)); tBar.BackgroundTransparency=1; corner(tBar,2)
-
-                local iconId=getIcon(o2.Icon)
-                local tIcImg=nil; local tIcTxt=nil
-                if iconId then
-                        tIcImg=img(tBtn,iconId,C.TextSub,UDim2.fromOffset(16,16),UDim2.new(0,10,0.5,-8))
-                else
-                        tIcTxt=lbl(tBtn,o2.Icon or "",14,C.TextSub,nil,{Size=UDim2.fromOffset(20,38),Position=UDim2.new(0,8,0,0),TextXAlignment=Enum.TextXAlignment.Center})
-                end
-                local tTitle=lbl(tBtn,o2.Title or "Tab",13,C.TextSub,nil,{Size=UDim2.new(1,-36,1,0),Position=UDim2.new(0,34,0,0)})
-                local tHit=btn(tBtn,{Size=UDim2.new(1,0,1,0),ZIndex=5})
-
-                local tSc=Instance.new("ScrollingFrame"); tSc.BackgroundTransparency=1; tSc.BorderSizePixel=0
-                tSc.Size=UDim2.new(1,0,1,0); tSc.CanvasSize=UDim2.new(0,0,0,0); tSc.AutomaticCanvasSize=Enum.AutomaticSize.Y
-                tSc.ScrollBarThickness=3; tSc.ElasticBehavior=Enum.ElasticBehavior.Never; tSc.Visible=false; tSc.Parent=content
-                pcall(function() tSc.ScrollBarImageColor3=C.AccentDrk end)
-                pad(tSc,6,8,10,8)
-                local tLay=Instance.new("UIListLayout"); tLay.SortOrder=Enum.SortOrder.LayoutOrder; tLay.Padding=UDim.new(0,8)
-                tLay.FillDirection=Enum.FillDirection.Horizontal; tLay.Wraps=true
-                tLay.HorizontalAlignment=Enum.HorizontalAlignment.Left; tLay.VerticalAlignment=Enum.VerticalAlignment.Top
-                tLay.Parent=tSc
-
-                tab._btn=tBtn; tab._scroll=tSc; tab._bar=tBar; tab._title=tTitle; tab._IcImg=tIcImg; tab._IcTxt=tIcTxt
-
-                local function activate()
-                        for _,t2 in ipairs(win._tabs) do
-                                tw(t2._btn,{BackgroundTransparency=1},0.12); tw(t2._bar,{BackgroundTransparency=1},0.12)
-                                t2._title.TextColor3=C.TextSub; t2._title.Font=Enum.Font.Gotham
-                                if t2._IcImg then tw(t2._IcImg,{ImageColor3=C.TextSub},0.12) end
-                                if t2._IcTxt then t2._IcTxt.TextColor3=C.TextSub end
-                                t2._scroll.Visible=false
-                        end
-                        tw(tBtn,{BackgroundTransparency=0.88},0.12); tw(tBar,{BackgroundTransparency=0},0.12)
-                        tTitle.TextColor3=C.Accent; tTitle.Font=Enum.Font.GothamSemibold
-                        if tIcImg then tw(tIcImg,{ImageColor3=C.Accent},0.12) end
-                        if tIcTxt then tIcTxt.TextColor3=C.Accent end
-                        tSc.Visible=true; win._active=tab; hTabName.Text=o2.Title or ""
-                end
-
-                tHit.MouseButton1Click:Connect(activate)
-                tHit.MouseEnter:Connect(function() if win._active~=tab then tw(tBtn,{BackgroundTransparency=0.94},0.1) end end)
-                tHit.MouseLeave:Connect(function() if win._active~=tab then tw(tBtn,{BackgroundTransparency=1},0.1) end end)
-                table.insert(win._tabs,tab)
-                if #win._tabs==1 then activate() end
-
-                srchBox:GetPropertyChangedSignal("Text"):Connect(function()
-                        local q=srchBox.Text:lower()
-                        for _,el in ipairs(tab._elements) do
-                                if el._row then el._row.Visible=q=="" or (el._name or ""):lower():find(q,1,true)~=nil end
-                        end
-                end)
-
-                -- â”€â”€ CreateSection â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                function tab:AddSection(o3)    return self:CreateSection(o3) end
-                function tab:CreateSection(o3)
-                        o3=o3 or {}
-                        local sec={_elements={},_order=#tab._sections+1}
-                        local secW=o3.Width or 1
-                        local xOff=(secW<1) and -4 or 0
-
-                        local secF=frm(tSc,Color3.fromRGB(18,18,18),UDim2.new(secW,xOff,0,0),nil,{AutomaticSize=Enum.AutomaticSize.Y,LayoutOrder=sec._order,ClipsDescendants=false})
-                        corner(secF,8)
-                        local secSk=stroke(secF,C.Border,1); secSk.Transparency=0.4; regA(secSk,"Color","border")
-
-                        local sHead=frm(secF,Color3.fromRGB(15,15,15),UDim2.new(1,0,0,32)); corner(sHead,8)
-                        frm(sHead,Color3.fromRGB(15,15,15),UDim2.new(1,0,0,8),UDim2.new(0,0,1,-8))
-                        frm(secF,C.Border,UDim2.new(1,-14,0,1),UDim2.new(0,7,0,31),{BackgroundTransparency=0.5})
-
-                        local sIconId=getIcon(o3.Icon)
-                        local sTitleX=18
-                        if sIconId then
-                                local si=img(sHead,sIconId,C.Accent,UDim2.fromOffset(14,14),UDim2.new(0,10,0.5,-7))
-                                regA(si,"ImageColor3"); sTitleX=30
-                        else
-                                local sBar=frm(sHead,C.Accent,UDim2.new(0,3,0.45,0),UDim2.new(0,10,0.275,0)); corner(sBar,2); regA(sBar,"BackgroundColor3")
-                        end
-                        local sTitleLbl=lbl(sHead,o3.Title or "SecciÃ³n",12,C.Accent,Enum.Font.GothamSemibold,{Size=UDim2.new(1,-sTitleX-4,1,0),Position=UDim2.new(0,sTitleX,0,0)})
-                        regA(sTitleLbl,"TextColor3")
-
-                        local secC=frm(secF,nil,UDim2.new(1,0,0,0),UDim2.new(0,0,0,32),{AutomaticSize=Enum.AutomaticSize.Y})
-                        local secLay=Instance.new("UIListLayout"); secLay.SortOrder=Enum.SortOrder.LayoutOrder; secLay.Padding=UDim.new(0,0); secLay.Parent=secC
-                        sec._frame=secF; sec._content=secC
-                        table.insert(tab._sections,sec)
-
-                        local eIdx=0
-                        local function nOrd() eIdx=eIdx+1; return eIdx end
-
-                        local function rowBase(name,h)
-                                h=h or 42
-                                local row=frm(secC,C.Hover,UDim2.new(1,0,0,h),nil,{BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                divLine(row,h-1)
-                                lbl(row,name or "",13,C.Text,nil,{Size=UDim2.new(0.54,-10,0,h),Position=UDim2.new(0,13,0,0)})
-                                row.MouseEnter:Connect(function() tw(row,{BackgroundTransparency=0.9},0.1) end)
-                                row.MouseLeave:Connect(function() tw(row,{BackgroundTransparency=1},0.1) end)
-                                return row
-                        end
-
-                        -- â”€â”€ Button â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddButton(o4)    return self:CreateButton(o4) end
-                        function sec:CreateButton(o4)
-                                o4=o4 or {}; local el={_name=o4.Name}; local cb=o4.Callback or function() end
-                                local rH=o4.Description and 52 or 42
-                                local row=frm(secC,C.Hover,UDim2.new(1,0,0,rH),nil,{BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                el._row=row; divLine(row,rH-1)
-                                lbl(row,o4.Name or "",13,C.Text,nil,{Size=UDim2.new(0.5,-10,0,20),Position=UDim2.new(0,13,0,o4.Description and 7 or 0),TextYAlignment=o4.Description and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center})
-                                if o4.Description then lbl(row,o4.Description,11,C.TextSub,nil,{Size=UDim2.new(0.5,-10,0,14),Position=UDim2.new(0,13,0,26)}) end
-                                local eb=Instance.new("ImageButton"); eb.Image=A.btnSlice; eb.ScaleType=Enum.ScaleType.Slice; eb.SliceCenter=Rect.new(4,4,12,12)
-                                eb.ImageColor3=C.Accent; eb.BackgroundColor3=C.Accent; eb.BackgroundTransparency=0; eb.BorderSizePixel=0; eb.AutoButtonColor=false
-                                eb.Size=UDim2.fromOffset(88,28); eb.Position=UDim2.new(1,-100,0.5,-14); eb.Parent=row; corner(eb,6)
-                                regA(eb,"ImageColor3"); regA(eb,"BackgroundColor3")
-                                lbl(eb,o4.ButtonText or "Ejecutar",12,Color3.new(1,1,1),Enum.Font.GothamSemibold,{Size=UDim2.new(1,0,1,0),TextXAlignment=Enum.TextXAlignment.Center})
-                                eb.MouseEnter:Connect(function() tw(eb,{ImageColor3=C.AccentHov,BackgroundColor3=C.AccentHov},0.1) end)
-                                eb.MouseLeave:Connect(function() tw(eb,{ImageColor3=C.Accent,BackgroundColor3=C.Accent},0.1) end)
-                                eb.MouseButton1Click:Connect(function()
-                                        tw(eb,{ImageColor3=C.AccentDrk,BackgroundColor3=C.AccentDrk},0.07); task.wait(0.1)
-                                        tw(eb,{ImageColor3=C.Accent,BackgroundColor3=C.Accent},0.15); pcall(cb)
-                                end)
-                                row.MouseEnter:Connect(function() tw(row,{BackgroundTransparency=0.9},0.1) end)
-                                row.MouseLeave:Connect(function() tw(row,{BackgroundTransparency=1},0.1) end)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:SetText(t) eb:FindFirstChildWhichIsA("TextLabel").Text=t end
-                                function el:SetCallback(f) cb=f end
-                                return el
-                        end
-
-                        -- â”€â”€ Toggle â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddToggle(o4)    return self:CreateToggle(o4) end
-                        function sec:CreateToggle(o4)
-                                o4=o4 or {}; local el={_name=o4.Name}; local val=o4.Default==true; local cb=o4.Callback or function() end
-                                local rH=o4.Description and 52 or 42
-                                local row=frm(secC,C.Hover,UDim2.new(1,0,0,rH),nil,{BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                el._row=row; divLine(row,rH-1)
-                                lbl(row,o4.Name or "",13,C.Text,nil,{Size=UDim2.new(0.64,-10,0,20),Position=UDim2.new(0,13,0,o4.Description and 7 or 0),TextYAlignment=o4.Description and Enum.TextYAlignment.Top or Enum.TextYAlignment.Center})
-                                if o4.Description then lbl(row,o4.Description,11,C.TextSub,nil,{Size=UDim2.new(0.64,-10,0,14),Position=UDim2.new(0,13,0,26)}) end
-                                local tW=frm(row,nil,UDim2.fromOffset(44,24),UDim2.new(1,-56,0.5,-12))
-                                local tBG=img(tW,A.toggleBG,val and C.Accent or C.ToggleOff,UDim2.new(1,0,1,0))
-                                local tKn=img(tW,A.toggleHead,Color3.new(1,1,1),UDim2.fromOffset(20,20),val and UDim2.new(1,-21,0.5,-10) or UDim2.new(0,1,0.5,-10))
-                                if o4.Flag and Lib.Flags[o4.Flag]~=nil then
-                                        val=Lib.Flags[o4.Flag]; tBG.ImageColor3=val and C.Accent or C.ToggleOff
-                                        tKn.Position=val and UDim2.new(1,-21,0.5,-10) or UDim2.new(0,1,0.5,-10)
-                                end
-                                local function setVal(v,silent)
-                                        val=v; tw(tBG,{ImageColor3=v and C.Accent or C.ToggleOff},0.16)
-                                        tw(tKn,{Position=v and UDim2.new(1,-21,0.5,-10) or UDim2.new(0,1,0.5,-10)},0.16)
-                                        if o4.Flag then Lib.Flags[o4.Flag]=v end
-                                        if not silent then pcall(cb,v) end
-                                end
-                                -- Registrar para SetTheme y para cambio de perfil
-                                table.insert(_acReg,{o=tBG,p="ImageColor3",k="accent",_toggleRef=true,_getVal=function() return val end})
-                                if o4.Flag then regFlag(o4.Flag, function(v) setVal(v,true) end, o4.Default==true) end
-                                local hit=btn(row,{Size=UDim2.new(1,0,1,0),ZIndex=5}); hit.MouseButton1Click:Connect(function() setVal(not val) end)
-                                row.MouseEnter:Connect(function() tw(row,{BackgroundTransparency=0.9},0.1) end)
-                                row.MouseLeave:Connect(function() tw(row,{BackgroundTransparency=1},0.1) end)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:Set(v)      setVal(v)  end
-                                function el:Get()      return val  end
-                                function el:OnChange(f) cb=f       end
-                                return el
-                        end
-
-                        -- â”€â”€ Slider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddSlider(o4)
-                                o4=o4 or {}; local el={_name=o4.Name}
-                                local sMin=o4.Min or 0; local sMax=o4.Max or 100; local step=o4.Step or 1
-                                local val=math.clamp(o4.Default or sMin,sMin,sMax); local cb=o4.Callback or function() end
-                                local rH=o4.Description and 60 or 50
-                                local row=frm(secC,C.Hover,UDim2.new(1,0,0,rH),nil,{BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                el._row=row; divLine(row,rH-1)
-                                lbl(row,o4.Name or "",13,C.Text,nil,{Size=UDim2.new(0.7,-10,0,18),Position=UDim2.new(0,13,0,8)})
-                                if o4.Description then lbl(row,o4.Description,11,C.TextSub,nil,{Size=UDim2.new(0.7,-10,0,14),Position=UDim2.new(0,13,0,24)}) end
-                                local vLbl=lbl(row,tostring(val),12,C.Accent,Enum.Font.GothamSemibold,{Size=UDim2.new(0.3,-12,0,18),Position=UDim2.new(0.7,0,0,8),TextXAlignment=Enum.TextXAlignment.Right})
-                                regA(vLbl,"TextColor3")
-                                local tY=o4.Description and 44 or 34
-                                local trBG=img(row,A.sliderBar,C.SliderBG,UDim2.new(1,-26,0,6),UDim2.new(0,13,0,tY))
-                                local p0=(val-sMin)/math.max(sMax-sMin,0.001)
-                                local trFill=img(row,A.sliderBar,C.Accent,UDim2.new(p0,0,0,6),UDim2.new(0,13,0,tY))
-                                regA(trFill,"ImageColor3")
-                                local knob=img(row,A.sliderHead,Color3.new(1,1,1),UDim2.fromOffset(14,14),UDim2.new(p0,13+p0*(-26)-7,0,tY-4))
-                                local sl=false
-                                local function upSlide(px)
-                                        local ax=trBG.AbsolutePosition.X; local sw=trBG.AbsoluteSize.X
-                                        local p=math.clamp((px-ax)/sw,0,1)
-                                        val=math.floor((sMin+p*(sMax-sMin))/step+0.5)*step; val=math.clamp(val,sMin,sMax)
-                                        p=(val-sMin)/math.max(sMax-sMin,0.001)
-                                        trFill.Size=UDim2.new(p,0,0,6); knob.Position=UDim2.new(p,13+p*(-26)-7,0,tY-4)
-                                        vLbl.Text=tostring(val); if o4.Flag then Lib.Flags[o4.Flag]=val end; pcall(cb,val)
-                                end
-                                if o4.Flag then regFlag(o4.Flag, function(v)
-                                        val=math.clamp(tonumber(v) or sMin,sMin,sMax)
-                                        local p=(val-sMin)/math.max(sMax-sMin,0.001)
-                                        trFill.Size=UDim2.new(p,0,0,6); knob.Position=UDim2.new(p,13+p*(-26)-7,0,tY-4)
-                                        vLbl.Text=tostring(val); if o4.Flag then Lib.Flags[o4.Flag]=val end; pcall(cb,val)
-                                end, o4.Default) end
-                                trBG.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then sl=true; upSlide(i.Position.X) end end)
-                                UserInputService.InputChanged:Connect(function(i) if sl and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then upSlide(i.Position.X) end end)
-                                UserInputService.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then sl=false end end)
-                                row.MouseEnter:Connect(function() tw(row,{BackgroundTransparency=0.9},0.1) end)
-                                row.MouseLeave:Connect(function() tw(row,{BackgroundTransparency=1},0.1) end)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:Set(v) upSlide(trBG.AbsolutePosition.X+(v-sMin)/math.max(sMax-sMin,0.001)*trBG.AbsoluteSize.X) end
-                                function el:Get()  return val end
-                                function el:OnChange(f) cb=f end
-                                return el
-                        end
-
-                        -- â”€â”€ Dropdown â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddDropdown(o4)    return self:CreateDropdown(o4) end
-                        function sec:CreateDropdown(o4)
-                                o4=o4 or {}; local el={_name=o4.Name}
-                                local opts=o4.Options or {}; local sel=o4.Default or opts[1] or ""
-                                local open=false; local cb=o4.Callback or function() end
-                                local wrap=frm(secC,C.Hover,UDim2.new(1,0,0,42),nil,{BackgroundTransparency=1,LayoutOrder=nOrd(),ClipsDescendants=false})
-                                el._row=wrap; divLine(wrap,41)
-                                lbl(wrap,o4.Name or "",13,C.Text,nil,{Size=UDim2.new(0.44,-10,1,0),Position=UDim2.new(0,13,0,0)})
-                                local dF=frm(wrap,Color3.fromRGB(18,18,18),UDim2.new(0.5,-12,0,28),UDim2.new(0.5,0,0.5,-14)); corner(dF,6); stroke(dF,C.Border,1)
-                                local selLbl=lbl(dF,sel,12,C.Accent,nil,{Size=UDim2.new(1,-20,1,0),Position=UDim2.new(0,7,0,0)}); regA(selLbl,"TextColor3")
-                                local arrI=img(dF,A.dropArrow,C.TextSub,UDim2.fromOffset(11,11),UDim2.new(1,-16,0.5,-5.5))
-                                local menu=frm(wrap,Color3.fromRGB(18,18,18),UDim2.new(0.5,-12,0,0),UDim2.new(0.5,0,0,44),{ClipsDescendants=true,ZIndex=20}); corner(menu,6); stroke(menu,C.Border,1)
-                                local mList=Instance.new("UIListLayout"); mList.SortOrder=Enum.SortOrder.LayoutOrder; mList.Parent=menu
-                                local optBtns={}
-                                local function rebuild()
-                                        for _,b2 in ipairs(optBtns) do b2:Destroy() end; optBtns={}
-                                        for i,op in ipairs(opts) do
-                                                local ob=btn(menu,{BackgroundColor3=Color3.fromRGB(24,24,24),BackgroundTransparency=1,Size=UDim2.new(1,0,0,28),LayoutOrder=i,ZIndex=21})
-                                                lbl(ob,op,12,C.Text,nil,{Size=UDim2.new(1,-14,1,0),Position=UDim2.new(0,7,0,0),ZIndex=21})
-                                                ob.MouseEnter:Connect(function() tw(ob,{BackgroundTransparency=0.86},0.1) end)
-                                                ob.MouseLeave:Connect(function() tw(ob,{BackgroundTransparency=1},0.1) end)
-                                                ob.MouseButton1Click:Connect(function()
-                                                        sel=op; selLbl.Text=op; open=false
-                                                        tw(menu,{Size=UDim2.new(0.5,-12,0,0)},0.16); tw(arrI,{Rotation=0},0.16)
-                                                        if o4.Flag then Lib.Flags[o4.Flag]=op end; pcall(cb,op)
-                                                        if o4.Flag then regFlag(o4.Flag, function(v) sel=v; selLbl.Text=v; Lib.Flags[o4.Flag]=v; pcall(cb,v) end, o4.Default) end
-                                                end)
-                                                table.insert(optBtns,ob)
-                                        end
-                                end
-                                rebuild()
-                                local dHit=btn(dF,{Size=UDim2.new(1,0,1,0),ZIndex=22})
-                                dHit.MouseButton1Click:Connect(function()
-                                        open=not open
-                                        tw(menu,{Size=UDim2.new(0.5,-12,0,open and math.min(#opts*28,160) or 0)},0.16)
-                                        tw(arrI,{Rotation=open and 180 or 0},0.16)
-                                end)
-                                wrap.MouseEnter:Connect(function() tw(wrap,{BackgroundTransparency=0.9},0.1) end)
-                                wrap.MouseLeave:Connect(function() tw(wrap,{BackgroundTransparency=1},0.1) end)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:Add(op)     table.insert(opts,op); rebuild() end
-                                function el:Remove(op)  for i,v in ipairs(opts) do if v==op then table.remove(opts,i) break end end rebuild() end
-                                function el:Set(v)      sel=v; selLbl.Text=v end
-                                function el:Get()       return sel end
-                                function el:OnChange(f) cb=f end
-                                return el
-                        end
-
-                        -- â”€â”€ Textbox â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddTextbox(o4)
-                                o4=o4 or {}; local el={_name=o4.Name}; local cb=o4.Callback or function() end
-                                local row=rowBase(o4.Name or ""); el._row=row
-                                local box=Instance.new("TextBox"); box.PlaceholderText=o4.Placeholder or "Escribe aquÃ­..."; box.Text=o4.Default or ""
-                                box.TextSize=12; box.Font=Enum.Font.Gotham; box.TextColor3=C.Text; box.PlaceholderColor3=C.TextDim
-                                box.BackgroundColor3=Color3.fromRGB(18,18,18); box.BackgroundTransparency=0; box.BorderSizePixel=0
-                                box.Size=UDim2.new(0.42,-10,0,26); box.Position=UDim2.new(0.58,0,0.5,-13); box.ClearTextOnFocus=false; box.Parent=row
-                                corner(box,6); pad(box,4,8,4,8); stroke(box,C.Border,1)
-                                box.Focused:Connect(function() tw(box,{BackgroundColor3=Color3.fromRGB(25,25,25)},0.12) end)
-                                box.FocusLost:Connect(function(e) tw(box,{BackgroundColor3=Color3.fromRGB(18,18,18)},0.12); pcall(cb,box.Text,e) end)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:Set(v)      box.Text=tostring(v) end
-                                function el:Get()       return box.Text end
-                                function el:OnChange(f) cb=f end
-                                return el
-                        end
-
-                        -- â”€â”€ Label â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddLabel(o4)
-                                o4=o4 or {}; local el={_name=o4.Text}
-                                local rH=o4.Right and 42 or 34
-                                local row=frm(secC,nil,UDim2.new(1,0,0,rH),nil,{BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                el._row=row; divLine(row,rH-1)
-                                local l2=lbl(row,o4.Text or "",13,o4.Color or C.TextSub,nil,{Size=UDim2.new(0.54,-10,1,0),Position=UDim2.new(0,13,0,0)})
-                                if o4.Right then
-                                        lbl(row,tostring(o4.Right),12,o4.RightColor or C.Accent,Enum.Font.GothamSemibold,{Size=UDim2.new(0.46,-14,1,0),Position=UDim2.new(0.54,0,0,0),TextXAlignment=Enum.TextXAlignment.Right})
-                                end
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:Set(t) l2.Text=t end
-                                function el:Get()  return l2.Text end
-                                return el
-                        end
-
-                        -- â”€â”€ Paragraph â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddParagraph(o4)
-                                o4=o4 or {}; local el={_name=o4.Title}
-                                local w2=frm(secC,nil,UDim2.new(1,0,0,0),nil,{AutomaticSize=Enum.AutomaticSize.Y,BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                el._row=w2
-                                lbl(w2,o4.Title or "",13,C.Text,Enum.Font.GothamBold,{Size=UDim2.new(1,-22,0,20),Position=UDim2.new(0,13,0,6)})
-                                lbl(w2,o4.Content or "",12,C.TextSub,nil,{Size=UDim2.new(1,-22,0,0),AutomaticSize=Enum.AutomaticSize.Y,Position=UDim2.new(0,13,0,28),TextWrapped=true})
-                                divLine(w2,0)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                return el
-                        end
-
-                        -- â”€â”€ Divider â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddDivider()
-                                local el={_name="___div"}
-                                local w2=frm(secC,nil,UDim2.new(1,0,0,14),nil,{BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                el._row=w2; frm(w2,C.Border,UDim2.new(1,-20,0,1),UDim2.new(0,10,0.5,0))
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                return el
-                        end
-
-                        -- â”€â”€ Keybind â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddKeybind(o4)
-                                o4=o4 or {}; local el={_name=o4.Name}; local curKey=o4.Default or Enum.KeyCode.Unknown
-                                local listening=false; local cb=o4.Callback or function() end
-                                local row=rowBase(o4.Name or ""); el._row=row
-                                local kF=frm(row,Color3.fromRGB(18,18,18),UDim2.fromOffset(106,26),UDim2.new(1,-118,0.5,-13)); corner(kF,6); stroke(kF,C.Border,1)
-                                local kLbl=lbl(kF,curKey.Name,11,C.Accent,Enum.Font.GothamSemibold,{Size=UDim2.new(1,0,1,0),TextXAlignment=Enum.TextXAlignment.Center}); regA(kLbl,"TextColor3")
-                                local kHit=btn(kF,{Size=UDim2.new(1,0,1,0),ZIndex=5})
-                                kHit.MouseButton1Click:Connect(function()
-                                        if listening then return end; listening=true; kLbl.Text="..."; kLbl.TextColor3=C.Warning
-                                        local conn; conn=UserInputService.InputBegan:Connect(function(i,gp)
-                                                if gp then return end
-                                                if i.UserInputType==Enum.UserInputType.Keyboard then
-                                                        curKey=i.KeyCode; kLbl.Text=i.KeyCode.Name; kLbl.TextColor3=C.Accent; listening=false; conn:Disconnect()
-                                                end
-                                        end)
-                                end)
-                                UserInputService.InputBegan:Connect(function(i,gp) if gp then return end if i.KeyCode==curKey then pcall(cb,curKey) end end)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:Get()       return curKey end
-                                function el:Set(k)      curKey=k; kLbl.Text=k.Name end
-                                function el:OnChange(f) cb=f end
-                                return el
-                        end
-
-                        -- â”€â”€ ColorPicker â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddColorPicker(o4)
-                                o4=o4 or {}; local el={_name=o4.Name}; local col=o4.Default or C.Accent
-                                local open2=false; local cb=o4.Callback or function() end
-                                local wrap=frm(secC,C.Hover,UDim2.new(1,0,0,42),nil,{BackgroundTransparency=1,LayoutOrder=nOrd(),ClipsDescendants=false})
-                                el._row=wrap; divLine(wrap,41)
-                                lbl(wrap,o4.Name or "",13,C.Text,nil,{Size=UDim2.new(0.6,-10,1,0),Position=UDim2.new(0,13,0,0)})
-                                local prev=frm(wrap,col,UDim2.fromOffset(40,22),UDim2.new(1,-52,0.5,-11)); corner(prev,6); stroke(prev,C.Border,1)
-                                local picker=frm(wrap,Color3.fromRGB(18,18,18),UDim2.new(1,-22,0,0),UDim2.new(0,11,0,44),{ClipsDescendants=true,ZIndex=15}); corner(picker,8); stroke(picker,C.Border,1)
-                                local rv,gv,bv={col.R*255},{col.G*255},{col.B*255}
-                                local function mkCh(nm,ref,sv,yp)
-                                        local ch=frm(picker,nil,UDim2.new(1,0,0,28),UDim2.new(0,0,0,yp),{ZIndex=16})
-                                        lbl(ch,nm,10,C.TextSub,Enum.Font.GothamBold,{Size=UDim2.fromOffset(14,28),Position=UDim2.new(0,8,0,0),TextXAlignment=Enum.TextXAlignment.Center,ZIndex=16})
-                                        local tB=frm(ch,C.SliderBG,UDim2.new(1,-86,0,4),UDim2.new(0,24,0.5,-2),{ZIndex=16}); corner(tB,2)
-                                        local tFi=frm(tB,C.Accent,UDim2.new(sv/255,0,1,0),nil,{ZIndex=16}); corner(tFi,2)
-                                        local tKn=frm(tB,Color3.new(1,1,1),UDim2.fromOffset(10,10),UDim2.new(sv/255,0,0.5,-5),{ZIndex=17}); corner(tKn,5)
-                                        local nb=Instance.new("TextBox"); nb.Text=tostring(math.floor(sv)); nb.TextSize=11; nb.Font=Enum.Font.Gotham; nb.TextColor3=C.Text; nb.BackgroundColor3=Color3.fromRGB(14,14,14); nb.BackgroundTransparency=0; nb.BorderSizePixel=0; nb.Size=UDim2.fromOffset(38,20); nb.Position=UDim2.new(1,-46,0.5,-10); nb.ZIndex=16; corner(nb,4); nb.Parent=ch
-                                        local sd=false
-                                        tB.InputBegan:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then sd=true end end)
-                                        UserInputService.InputChanged:Connect(function(i)
-                                                if sd and (i.UserInputType==Enum.UserInputType.MouseMovement or i.UserInputType==Enum.UserInputType.Touch) then
-                                                        local p=math.clamp((i.Position.X-tB.AbsolutePosition.X)/tB.AbsoluteSize.X,0,1)
-                                                        tFi.Size=UDim2.new(p,0,1,0); tKn.Position=UDim2.new(p,0,0.5,-5); ref[1]=math.floor(p*255); nb.Text=tostring(ref[1])
-                                                        col=Color3.fromRGB(rv[1],gv[1],bv[1]); prev.BackgroundColor3=col; pcall(cb,col)
-                                                end
-                                        end)
-                                        UserInputService.InputEnded:Connect(function(i) if i.UserInputType==Enum.UserInputType.MouseButton1 or i.UserInputType==Enum.UserInputType.Touch then sd=false end end)
-                                end
-                                mkCh("R",rv,rv[1],6); mkCh("G",gv,gv[1],36); mkCh("B",bv,bv[1],66)
-                                local pH=btn(prev,{Size=UDim2.new(1,0,1,0),ZIndex=5})
-                                pH.MouseButton1Click:Connect(function() open2=not open2; tw(picker,{Size=UDim2.new(1,-22,0,open2 and 100 or 0)},0.18) end)
-                                wrap.MouseEnter:Connect(function() tw(wrap,{BackgroundTransparency=0.9},0.1) end)
-                                wrap.MouseLeave:Connect(function() tw(wrap,{BackgroundTransparency=1},0.1) end)
-                                table.insert(tab._elements,el); table.insert(sec._elements,el)
-                                function el:Get()       return col end
-                                function el:Set(c)      col=c; prev.BackgroundColor3=c end
-                                function el:OnChange(f) cb=f end
-                                return el
-                        end
-
-                        -- â”€â”€ ConfigManager â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddConfigManager(o4)
-                                o4 = o4 or {}
-                                local folder = o4.Folder or Lib.ConfigFolder
-                                local onLoad = o4.OnLoad or function() end
-                                local onSave = o4.OnSave or function() end
-
-                                -- â”€â”€ Fila: input + botÃ³n guardar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                                local saveRow = frm(secC, C.Hover, UDim2.new(1,0,0,46), nil, {BackgroundTransparency=1, LayoutOrder=nOrd()})
-                                divLine(saveRow, 45)
-                                lbl(saveRow, "Nombre", 13, C.Text, nil, {Size=UDim2.new(0,56,1,0), Position=UDim2.new(0,13,0,0)})
-
-                                local nameBox = Instance.new("TextBox")
-                                nameBox.PlaceholderText = "mi_config"
-                                nameBox.Text = "" nameBox.TextSize = 11 nameBox.Font = Enum.Font.Gotham
-                                nameBox.TextColor3 = C.Text nameBox.PlaceholderColor3 = C.TextDim
-                                nameBox.BackgroundColor3 = Color3.fromRGB(18,18,18) nameBox.BackgroundTransparency = 0
-                                nameBox.BorderSizePixel = 0 nameBox.ClearTextOnFocus = false
-                                nameBox.Size = UDim2.new(1,-178,0,26) nameBox.Position = UDim2.new(0,74,0.5,-13)
-                                nameBox.Parent = saveRow; corner(nameBox,6); pad(nameBox,4,8,4,8); stroke(nameBox, C.Border, 1)
-                                nameBox.Focused:Connect(function() tw(nameBox,{BackgroundColor3=Color3.fromRGB(25,25,25)},0.12) end)
-                                nameBox.FocusLost:Connect(function() tw(nameBox,{BackgroundColor3=Color3.fromRGB(18,18,18)},0.12) end)
-
-                                local listHolder   -- declarado adelante
-                                local function refreshList()
-                                        if not listHolder then return end
-                                        for _,ch in ipairs(listHolder:GetChildren()) do
-                                                if ch:IsA("Frame") then ch:Destroy() end
-                                        end
-                                        local files = {}
-                                        pcall(function()
-                                                if not isfolder(folder) then makefolder(folder) end
-                                                files = listfiles(folder)
-                                        end)
-                                        if #files == 0 then
-                                                local noFiles = frm(listHolder, nil, UDim2.new(1,0,0,34), nil, {BackgroundTransparency=1, LayoutOrder=1})
-                                                lbl(noFiles, "Sin configs guardadas", 12, C.TextDim, nil, {
-                                                        Size=UDim2.new(1,0,1,0), Position=UDim2.new(0,13,0,0),
-                                                })
-                                                return
-                                        end
-                                        local rowIdx = 0
-                                        for _, fpath in ipairs(files) do
-                                                if fpath:find("%.json$") then
-                                                        rowIdx = rowIdx + 1
-                                                        local fname = fpath:match("([^/\\]+)%.json$") or fpath
-                                                        local cfgRow = frm(listHolder, C.Hover, UDim2.new(1,0,0,38), nil, {BackgroundTransparency=1, LayoutOrder=rowIdx})
-                                                        cfgRow.MouseEnter:Connect(function() tw(cfgRow,{BackgroundTransparency=0.9},0.1) end)
-                                                        cfgRow.MouseLeave:Connect(function() tw(cfgRow,{BackgroundTransparency=1},0.1) end)
-                                                        divLine(cfgRow, 37)
-
-                                                        local fileIcon = img(cfgRow, Icons["file"] or "", C.TextSub, UDim2.fromOffset(13,13), UDim2.new(0,13,0.5,-6.5))
-                                                        lbl(cfgRow, fname, 12, C.Text, nil, {
-                                                                Size=UDim2.new(1,-180,1,0), Position=UDim2.new(0,32,0,0),
-                                                                TextTruncate=Enum.TextTruncate.AtEnd,
-                                                        })
-
-                                                        -- BotÃ³n Cargar
-                                                        local loadB = Instance.new("ImageButton")
-                                                        loadB.Image = A.btnSlice loadB.ScaleType = Enum.ScaleType.Slice loadB.SliceCenter = Rect.new(4,4,12,12)
-                                                        loadB.ImageColor3 = Color3.fromRGB(30,90,30) loadB.BackgroundColor3 = Color3.fromRGB(30,90,30)
-                                                        loadB.BackgroundTransparency = 0 loadB.BorderSizePixel = 0 loadB.AutoButtonColor = false
-                                                        loadB.Size = UDim2.fromOffset(60,24) loadB.Position = UDim2.new(1,-142,0.5,-12) loadB.Parent = cfgRow
-                                                        corner(loadB,5)
-                                                        lbl(loadB,"Cargar",11,Color3.new(1,1,1),Enum.Font.GothamSemibold,{Size=UDim2.new(1,0,1,0),TextXAlignment=Enum.TextXAlignment.Center})
-                                                        loadB.MouseEnter:Connect(function() tw(loadB,{ImageColor3=Color3.fromRGB(40,120,40),BackgroundColor3=Color3.fromRGB(40,120,40)},0.1) end)
-                                                        loadB.MouseLeave:Connect(function() tw(loadB,{ImageColor3=Color3.fromRGB(30,90,30),BackgroundColor3=Color3.fromRGB(30,90,30)},0.1) end)
-                                                        loadB.MouseButton1Click:Connect(function()
-                                                                pcall(function()
-                                                                        local data = HttpService:JSONDecode(readfile(fpath))
-                                                                        for k,v in pairs(data) do Lib.Flags[k]=v end
-                                                                        nameBox.Text = fname
-                                                                end)
-                                                                Notify({Title="Config cargada",Text=fname,Type="success",Duration=3})
-                                                                pcall(onLoad, fname)
-                                                        end)
-
-                                                        -- BotÃ³n Borrar
-                                                        local delB = Instance.new("ImageButton")
-                                                        delB.Image = A.btnSlice delB.ScaleType = Enum.ScaleType.Slice delB.SliceCenter = Rect.new(4,4,12,12)
-                                                        delB.ImageColor3 = Color3.fromRGB(100,18,18) delB.BackgroundColor3 = Color3.fromRGB(100,18,18)
-                                                        delB.BackgroundTransparency = 0 delB.BorderSizePixel = 0 delB.AutoButtonColor = false
-                                                        delB.Size = UDim2.fromOffset(60,24) delB.Position = UDim2.new(1,-74,0.5,-12) delB.Parent = cfgRow
-                                                        corner(delB,5)
-                                                        lbl(delB,"Borrar",11,Color3.new(1,1,1),Enum.Font.GothamSemibold,{Size=UDim2.new(1,0,1,0),TextXAlignment=Enum.TextXAlignment.Center})
-                                                        delB.MouseEnter:Connect(function() tw(delB,{ImageColor3=C.Error,BackgroundColor3=C.Error},0.1) end)
-                                                        delB.MouseLeave:Connect(function() tw(delB,{ImageColor3=Color3.fromRGB(100,18,18),BackgroundColor3=Color3.fromRGB(100,18,18)},0.1) end)
-                                                        delB.MouseButton1Click:Connect(function()
-                                                                pcall(function() delfile(fpath) end)
-                                                                Notify({Title="Config borrada",Text=fname,Type="warning",Duration=3})
-                                                                refreshList()
-                                                        end)
-                                                end
-                                        end
-                                        if rowIdx == 0 then
-                                                local noFiles = frm(listHolder, nil, UDim2.new(1,0,0,34), nil, {BackgroundTransparency=1, LayoutOrder=1})
-                                                lbl(noFiles, "Sin configs guardadas", 12, C.TextDim, nil, {Size=UDim2.new(1,0,1,0), Position=UDim2.new(0,13,0,0)})
-                                        end
-                                end
-
-                                -- BotÃ³n Guardar
-                                local saveB = Instance.new("ImageButton")
-                                saveB.Image = A.btnSlice saveB.ScaleType = Enum.ScaleType.Slice saveB.SliceCenter = Rect.new(4,4,12,12)
-                                saveB.ImageColor3 = C.Accent saveB.BackgroundColor3 = C.Accent
-                                saveB.BackgroundTransparency = 0 saveB.BorderSizePixel = 0 saveB.AutoButtonColor = false
-                                saveB.Size = UDim2.fromOffset(72,26) saveB.Position = UDim2.new(1,-84,0.5,-13) saveB.Parent = saveRow
-                                corner(saveB,6)
-                                regA(saveB,"ImageColor3"); regA(saveB,"BackgroundColor3")
-                                lbl(saveB,"Guardar",12,Color3.new(1,1,1),Enum.Font.GothamSemibold,{Size=UDim2.new(1,0,1,0),TextXAlignment=Enum.TextXAlignment.Center})
-                                saveB.MouseEnter:Connect(function() tw(saveB,{ImageColor3=C.AccentHov,BackgroundColor3=C.AccentHov},0.1) end)
-                                saveB.MouseLeave:Connect(function() tw(saveB,{ImageColor3=C.Accent,BackgroundColor3=C.Accent},0.1) end)
-                                saveB.MouseButton1Click:Connect(function()
-                                        local name = nameBox.Text ~= "" and nameBox.Text or "default"
-                                        name = name:gsub("[^%w_%-]","_")
-                                        pcall(function()
-                                                if not isfolder(folder) then makefolder(folder) end
-                                                writefile(folder.."/"..name..".json", HttpService:JSONEncode(Lib.Flags))
-                                        end)
-                                        tw(saveB,{ImageColor3=C.AccentDrk,BackgroundColor3=C.AccentDrk},0.07)
-                                        task.wait(0.1); tw(saveB,{ImageColor3=C.Accent,BackgroundColor3=C.Accent},0.15)
-                                        Notify({Title="Config guardada",Text=name,Type="success",Duration=3})
-                                        refreshList(); pcall(onSave,name)
-                                end)
-
-                                -- â”€â”€ Lista de configs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                                local listWrap = frm(secC, nil, UDim2.new(1,0,0,0), nil, {AutomaticSize=Enum.AutomaticSize.Y, LayoutOrder=nOrd(), BackgroundTransparency=1})
-                                listHolder = listWrap
-                                local listLayout = Instance.new("UIListLayout"); listLayout.SortOrder=Enum.SortOrder.LayoutOrder; listLayout.Padding=UDim.new(0,0); listLayout.Parent=listWrap
-
-                                saveRow.MouseEnter:Connect(function() tw(saveRow,{BackgroundTransparency=0.9},0.1) end)
-                                saveRow.MouseLeave:Connect(function() tw(saveRow,{BackgroundTransparency=1},0.1) end)
-
-                                refreshList()
-                                return {Refresh = refreshList}
-                        end
-
-                        -- â”€â”€ ProfileSelector â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                        function sec:AddProfileSelector(o4)
-                                o4 = o4 or {}
-                                local profiles = o4.Profiles or {"Perfil_A","Perfil_B","Perfil_C"}
-                                local pfolder  = o4.Folder or Lib._profileFolder
-                                Lib._profileFolder = pfolder
-
-                                -- Fila: selector de perfil activo
-                                local selRow = frm(secC,C.Hover,UDim2.new(1,0,0,46),nil,{BackgroundTransparency=1,LayoutOrder=nOrd()})
-                                selRow.MouseEnter:Connect(function() tw(selRow,{BackgroundTransparency=0.9},0.1) end)
-                                selRow.MouseLeave:Connect(function() tw(selRow,{BackgroundTransparency=1},0.1) end)
-                                divLine(selRow,45)
-                                lbl(selRow,"Perfil",13,C.Text,nil,{Size=UDim2.new(0,50,1,0),Position=UDim2.new(0,13,0,0)})
-
-                                -- mini dropdown de perfiles
-                                local curProf = o4.Default or profiles[1] or "Perfil_A"
-                                local pdOpen  = false
-                                local pdF = frm(selRow,Color3.fromRGB(18,18,18),UDim2.new(1,-170,0,28),UDim2.new(0,68,0.5,-14)); corner(pdF,6); stroke(pdF,C.Border,1)
-                                local pdLbl = lbl(pdF,curProf,12,C.Accent,nil,{Size=UDim2.new(1,-20,1,0),Position=UDim2.new(0,7,0,0)}); regA(pdLbl,"TextColor3")
-                                local pdArr = img(pdF,A.dropArrow,C.TextSub,UDim2.fromOffset(11,11),UDim2.new(1,-16,0.5,-5.5))
-                                local pdMenu = frm(selRow,Color3.fromRGB(18,18,18),UDim2.new(1,-170,0,0),UDim2.new(0,68,0,48),{ClipsDescendants=true,ZIndex=20}); corner(pdMenu,6); stroke(pdMenu,C.Border,1)
-                                local pdList = Instance.new("UIListLayout"); pdList.SortOrder=Enum.SortOrder.LayoutOrder; pdList.Parent=pdMenu
-
-                                local function buildProfileMenu()
-                                        for _,ch in ipairs(pdMenu:GetChildren()) do if ch:IsA("TextButton") then ch:Destroy() end end
-                                        -- combinar perfiles predefinidos + los que existan en disco
-                                        local seen = {}
-                                        local allP = {}
-                                        for _,p in ipairs(profiles) do if not seen[p] then seen[p]=true; table.insert(allP,p) end end
-                                        for _,p in ipairs(Lib:ListProfiles()) do if not seen[p] then seen[p]=true; table.insert(allP,p) end end
-                                        for i,pname in ipairs(allP) do
-                                                local ob=btn(pdMenu,{BackgroundColor3=Color3.fromRGB(24,24,24),BackgroundTransparency=1,Size=UDim2.new(1,0,0,28),LayoutOrder=i,ZIndex=21})
-                                                lbl(ob,pname,12,pname==curProf and C.Accent or C.Text,nil,{Size=UDim2.new(1,-14,1,0),Position=UDim2.new(0,7,0,0),ZIndex=21})
-                                                ob.MouseEnter:Connect(function() tw(ob,{BackgroundTransparency=0.86},0.1) end)
-                                                ob.MouseLeave:Connect(function() tw(ob,{BackgroundTransparency=1},0.1) end)
-                                                ob.MouseButton1Click:Connect(function()
-                                                        curProf=pname; pdLbl.Text=pname; pdOpen=false
-                                                        tw(pdMenu,{Size=UDim2.new(1,-170,0,0)},0.16); tw(pdArr,{Rotation=0},0.16)
-                                                        Lib:SetProfile(pname)
-                                                        buildProfileMenu()
-                                                end)
-                                        end
-                                end
-                                buildProfileMenu()
-
-                                local pdHit=btn(pdF,{Size=UDim2.new(1,0,1,0),ZIndex=22})
-                                pdHit.MouseButton1Click:Connect(function()
-                                        pdOpen=not pdOpen
-                                        local h=0; for _,c in ipairs(pdMenu:GetChildren()) do if c:IsA("TextButton") then h=h+28 end end
-                                        tw(pdMenu,{Size=UDim2.new(1,-170,0,pdOpen and math.min(h,140) or 0)},0.16)
-                                        tw(pdArr,{Rotation=pdOpen and 180 or 0},0.16)
-                                end)
-
-                                -- BotÃ³n Guardar perfil actual
-                                local saveP = Instance.new("ImageButton")
-                                saveP.Image=A.btnSlice; saveP.ScaleType=Enum.ScaleType.Slice; saveP.SliceCenter=Rect.new(4,4,12,12)
-                                saveP.ImageColor3=C.Accent; saveP.BackgroundColor3=C.Accent
-                                saveP.BackgroundTransparency=0; saveP.BorderSizePixel=0; saveP.AutoButtonColor=false
-                                saveP.Size=UDim2.fromOffset(64,26); saveP.Position=UDim2.new(1,-76,0.5,-13); saveP.Parent=selRow
-                                corner(saveP,5); regA(saveP,"ImageColor3"); regA(saveP,"BackgroundColor3")
-                                lbl(saveP,"Guardar",11,Color3.new(1,1,1),Enum.Font.GothamSemibold,{Size=UDim2.new(1,0,1,0),TextXAlignment=Enum.TextXAlignment.Center})
-                                saveP.MouseEnter:Connect(function() tw(saveP,{ImageColor3=C.AccentHov,BackgroundColor3=C.AccentHov},0.1) end)
-                                saveP.MouseLeave:Connect(function() tw(saveP,{ImageColor3=C.Accent,BackgroundColor3=C.Accent},0.1) end)
-                                saveP.MouseButton1Click:Connect(function()
-                                        tw(saveP,{ImageColor3=C.AccentDrk,BackgroundColor3=C.AccentDrk},0.07)
-                                        task.wait(0.1); tw(saveP,{ImageColor3=C.Accent,BackgroundColor3=C.Accent},0.15)
-                                        Lib:SaveProfile(curProf)
-                                        Notify({Title="Perfil guardado",Text="'"..curProf.."' guardado.",Type="success",Duration=2.5})
-                                end)
-
-                                -- Activar perfil inicial silenciosamente
-                                task.defer(function() Lib:SetProfile(curProf, true) end)
-                                if o4.OnChange then Lib:OnProfileChanged(o4.OnChange) end
-
-                                return {
-                                        GetProfile  = function() return curProf end,
-                                        SetProfile  = function(_, n) curProf=n; pdLbl.Text=n; Lib:SetProfile(n) end,
-                                        Refresh     = buildProfileMenu,
-                                }
-                        end
-
-                        return sec
-                end -- CreateSection
-
-                -- â”€â”€ AddConfigTab â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-                function win:AddConfigTab(o2)
-                        o2 = o2 or {}
-                        local folder = o2.Folder or Lib.ConfigFolder
-                        local tab = self:CreateTab({
-                                Title = o2.Title or "Configs",
-                                Icon  = o2.Icon  or "folder",
-                        })
-
-                        -- SecciÃ³n de perfiles (si se pide)
-                        if o2.Profiles ~= false then
-                                local pSec = tab:CreateSection({Title="Perfiles", Icon="users", Width=1})
-                                pSec:AddProfileSelector({
-                                        Profiles  = o2.Profiles or {"Perfil_A","Perfil_B","Perfil_C"},
-                                        Folder    = folder.."/Profiles",
-                                        Default   = (o2.Profiles and o2.Profiles[1]) or "Perfil_A",
-                                        OnChange  = o2.OnProfileChange,
-                                })
-                        end
-
-                        -- SecciÃ³n de configs manuales
-                        local cSec = tab:CreateSection({
-                                Title = o2.SectionTitle or "Configs guardadas",
-                                Icon  = "save",
-                                Width = 1,
-                        })
-                        local mgr = cSec:AddConfigManager({
-                                Folder = folder,
-                                OnLoad = o2.OnLoad,
-                                OnSave = o2.OnSave,
-                        })
-
-                        -- SecciÃ³n de temas (opcional)
-                        if o2.Theme then
-                                local tSec = tab:CreateSection({Title="Tema", Icon="sliders", Width=1})
-                                local themeNames = {}
-                                for k in pairs(Lib.Themes) do table.insert(themeNames, k) end
-                                table.sort(themeNames)
-                                tSec:AddDropdown({
-                                        Name = "Color de acento",
-                                        Description = "Cambia el tema de la librerÃ­a.",
-                                        Options = themeNames,
-                                        Default = themeNames[1],
-                                        Callback = function(v) Lib:SetTheme(v) end,
-                                })
-                        end
-                        return tab, mgr
-                end
-
-                return tab
-        end -- CreateTab
-
-        getgenv().BloodLib=win
-        return win
+function Notif:push(o)
+	o=o or{}; local th=self.th; self.n+=1
+	local title=o.Title or "Info"; local body=o.Content or ""
+	local dur=o.Duration or 5; local ntype=o.Type or "Info"
+	local colors={Info=th.accent,Success=th.online,Warning=Color3.fromRGB(255,185,40),Error=Color3.fromRGB(215,55,55)}
+	local ac=colors[ntype] or th.accent
+
+	local c=U.new("Frame",{Name="Toast"..self.n,Size=UDim2.new(1,0,0,64),
+		BackgroundColor3=th.notifBg,BorderSizePixel=0,ZIndex=501,Parent=self.cont})
+	U.corner(c,th.r); U.stroke(c,th.border,1)
+
+	local bar=U.new("Frame",{Size=UDim2.new(0,3,1,-10),Position=UDim2.new(0,0,0,5),
+		BackgroundColor3=ac,BorderSizePixel=0,ZIndex=502,Parent=c})
+	U.corner(bar,UDim.new(1,0))
+
+	local prog=U.new("Frame",{Size=UDim2.new(1,-3,0,2),Position=UDim2.new(0,3,1,-2),
+		BackgroundColor3=ac,BorderSizePixel=0,ZIndex=502,Parent=c})
+
+	local badge=U.new("Frame",{Size=UDim2.new(0,46,0,14),Position=UDim2.new(1,-54,0,8),
+		BackgroundColor3=ac,BorderSizePixel=0,ZIndex=502,Parent=c})
+	U.corner(badge,UDim.new(0,3))
+	U.new("TextLabel",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+		Text=ntype:upper(),TextColor3=Color3.new(1,1,1),Font=th.fontB,TextSize=8,ZIndex=503,Parent=badge})
+
+	U.new("TextLabel",{Size=UDim2.new(1,-20,0,18),Position=UDim2.new(0,14,0,8),
+		BackgroundTransparency=1,Text=title,TextColor3=th.txt1,Font=th.fontB,TextSize=12,
+		TextXAlignment=Enum.TextXAlignment.Left,ZIndex=502,Parent=c})
+	U.new("TextLabel",{Size=UDim2.new(1,-20,0,28),Position=UDim2.new(0,14,0,28),
+		BackgroundTransparency=1,Text=body,TextColor3=th.txt2,Font=th.font,TextSize=10,
+		TextXAlignment=Enum.TextXAlignment.Left,TextWrapped=true,ZIndex=502,Parent=c})
+
+	c.Position=UDim2.new(1,10,0,0)
+	U.tw(c,TweenInfo.new(0.3,Enum.EasingStyle.Back,Enum.EasingDirection.Out),{Position=UDim2.new(0,0,0,0)})
+	U.tw(prog,TweenInfo.new(dur,Enum.EasingStyle.Linear),{Size=UDim2.new(0,0,0,2)})
+
+	task.delay(dur,function()
+		if not c or not c.Parent then return end
+		U.tw(c,TweenInfo.new(0.22,Enum.EasingStyle.Quint,Enum.EasingDirection.In),{Size=UDim2.new(1,0,0,0)})
+		task.delay(0.25,function() if c and c.Parent then c:Destroy() end end)
+	end)
+	return c
 end
 
--- Actualizar SetTheme para manejar correctamente los toggles activos
-local _origSetTheme = Lib.SetTheme
-Lib.SetTheme = function(self, t)
-        _origSetTheme(self, t)
-        -- Toggles: solo re-colorear si estÃ¡n activos (val=true)
-        for _,e in ipairs(_acReg) do
-                if e._toggleRef then
-                        pcall(function()
-                                if e._getVal() then e.o[e.p]=C.Accent
-                                else e.o[e.p]=C.ToggleOff end
-                        end)
-                end
-        end
+-- ─── Config ───────────────────────────────────────────────────────────────────
+local Cfg={}; Cfg.__index=Cfg
+
+function Cfg.new(lib) local self=setmetatable({},Cfg); self.lib=lib; return self end
+
+function Cfg:fromURL(url)
+	local ok,raw=pcall(function() return HS:GetAsync(url) end)
+	if not ok then warn("[BloodLib] Config URL failed: "..tostring(raw)); return false end
+	return self:_apply(raw)
 end
 
-return Lib
+function Cfg:fromJSON(s) return self:_apply(s) end
+
+function Cfg:_apply(raw)
+	local ok,d=pcall(function() return HS:JSONDecode(raw) end)
+	if not ok then warn("[BloodLib] Config JSON invalid"); return false end
+	if d.Theme then self.lib:setTheme(d.Theme) end
+	if d.Settings then for k,v in pairs(d.Settings) do self.lib.cfg[k]=v end end
+	return true
+end
+
+function Cfg:export()
+	local d={Theme=self.lib.themeName,Settings=self.lib.cfg}
+	local ok,j=pcall(function() return HS:JSONEncode(d) end)
+	return ok and j or "{}"
+end
+
+-- ─── Library (Entry Point) ────────────────────────────────────────────────────
+local Library={}; Library.__index=Library
+
+function Library.new(opts)
+	opts=opts or{}
+	local self=setmetatable({},Library)
+	self.themeName = opts.Theme or "Blood"
+	self.theme     = T.get(self.themeName)
+	self.cfg       = {}
+	self.tabs      = {}
+	self.activeTab = nil
+	self.ver       = "1.0"
+
+	self.win = Win.new({
+		Title    = opts.Title    or "BLOOD LIBRARY",
+		Logo     = opts.Logo     or "rbxassetid://72559578724301",
+		Subtitle = opts.Subtitle or "BLOOD HUB",
+		Size     = opts.Size,
+		Draggable= opts.Draggable,
+	}, self.theme, self)
+
+	self.notif = Notif.new(self.win.sg, self.theme)
+	self.cfgM  = Cfg.new(self)
+	self.WindowInstance = self.win
+	return self
+end
+
+-- ── Tab creation ──────────────────────────────────────────────────────────────
+function Library:tab(opts)
+	opts=opts or{}
+	local th      = self.theme
+	local W       = self.win
+	local name    = opts.Name     or "Tab"
+	local icon    = opts.Icon     or ""
+	local order   = opts.Order    or #self.tabs+1
+	local sub     = opts.Subtitle or ""
+	local enabled = opts.Enabled~=false
+	local first   = #self.tabs==0
+
+	-- ── Sidebar button (KOD style: full red bg when active) ──────────────────
+	local btn=U.new("Frame",{Name="Btn_"..name,Size=UDim2.new(1,0,0,36),
+		BackgroundColor3=first and th.tabA or th.tabI,BorderSizePixel=0,
+		LayoutOrder=order,ZIndex=5,Parent=W.tabScroll})
+	U.corner(btn,th.r)
+
+	local xo=icon~="" and 30 or 12
+	if icon~="" then
+		U.new("ImageLabel",{Size=UDim2.new(0,16,0,16),Position=UDim2.new(0,10,0.5,-8),
+			BackgroundTransparency=1,Image=icon,
+			ImageColor3=first and Color3.new(1,1,1) or th.tabTxtI,ZIndex=6,Parent=btn})
+	end
+	local bLbl=U.new("TextLabel",{Size=UDim2.new(1,-(xo+6),1,0),Position=UDim2.new(0,xo,0,0),
+		BackgroundTransparency=1,Text=name,
+		TextColor3=first and th.tabTxt or th.tabTxtI,
+		Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=6,Parent=btn})
+
+	-- ── Content frame: 2-column grid ─────────────────────────────────────────
+	local cf=U.new("Frame",{Name="CF_"..name,
+		Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,
+		BackgroundTransparency=1,Visible=first,ZIndex=5,Parent=W.cs})
+	U.pad(cf,10,10,14,10)
+
+	-- Two columns side by side
+	local grid=U.new("Frame",{Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,
+		BackgroundTransparency=1,ZIndex=5,Parent=cf})
+	local gridL=Instance.new("UIListLayout")
+	gridL.FillDirection=Enum.FillDirection.Horizontal
+	gridL.HorizontalAlignment=Enum.HorizontalAlignment.Left
+	gridL.VerticalAlignment=Enum.VerticalAlignment.Top
+	gridL.Padding=UDim.new(0,8)
+	gridL.SortOrder=Enum.SortOrder.LayoutOrder
+	gridL.Parent=grid
+
+	local colL=U.new("Frame",{Name="ColL",Size=UDim2.new(0.5,-4,0,0),
+		AutomaticSize=Enum.AutomaticSize.Y,BackgroundTransparency=1,
+		LayoutOrder=1,ZIndex=5,Parent=grid})
+	U.list(colL,nil,8)
+
+	local colR=U.new("Frame",{Name="ColR",Size=UDim2.new(0.5,-4,0,0),
+		AutomaticSize=Enum.AutomaticSize.Y,BackgroundTransparency=1,
+		LayoutOrder=2,ZIndex=5,Parent=grid})
+	U.list(colR,nil,8)
+
+	-- Auto-update canvas size when content changes
+	for _,col in ipairs({colL,colR}) do
+		local ll=col:FindFirstChildOfClass("UIListLayout")
+		if ll then
+			ll:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+				if self.activeTab and self.activeTab.cf==cf then
+					local maxH=math.max(colL.AbsoluteSize.Y,colR.AbsoluteSize.Y)
+					W.cs.CanvasSize=UDim2.new(0,0,0,maxH+24+20)
+				end
+			end)
+		end
+	end
+
+	local tabObj={name=name,icon=icon,sub=sub,order=order,enabled=enabled,
+		cf=cf,btn=btn,lbl=bLbl,colL=colL,colR=colR,lib=self,theme=th,
+		_nextCol="left"}
+
+	-- Hit button
+	local hitB=U.new("TextButton",{Size=UDim2.new(1,0,1,0),BackgroundTransparency=1,
+		Text="",ZIndex=7,Parent=btn})
+	hitB.MouseEnter:Connect(function()
+		if self.activeTab==tabObj then return end
+		U.tw(btn,U.F,{BackgroundColor3=th.tabHov})
+		U.tw(bLbl,U.F,{TextColor3=th.txt2})
+	end)
+	hitB.MouseLeave:Connect(function()
+		if self.activeTab==tabObj then return end
+		U.tw(btn,U.F,{BackgroundColor3=th.tabI})
+		U.tw(bLbl,U.F,{TextColor3=th.tabTxtI})
+	end)
+	hitB.MouseButton1Click:Connect(function()
+		if not tabObj.enabled then return end
+		self:_select(tabObj)
+	end)
+
+	-- ── Section factory ───────────────────────────────────────────────────────
+	-- Creates a titled, bordered section box in left or right column.
+	-- Elements go inside. Matches KOD "Player / Combat / Info / Misc" boxes.
+	function tabObj:Section(sopts)
+		sopts=sopts or{}
+		local sname=sopts.Name or ""
+		local sicon=sopts.Icon or ""
+		local col=sopts.Column=="right" and self.colR or self.colL
+
+		local box=U.new("Frame",{Size=UDim2.new(1,0,0,0),AutomaticSize=Enum.AutomaticSize.Y,
+			BackgroundColor3=th.secBg,BorderSizePixel=0,ZIndex=8,Parent=col})
+		U.corner(box,th.r); U.stroke(box,th.border,1)
+
+		-- Section header bar
+		local hdr=U.new("Frame",{Size=UDim2.new(1,0,0,28),BackgroundColor3=th.secHdr,
+			BorderSizePixel=0,ZIndex=9,Parent=box})
+		U.corner(hdr,th.r)
+		-- Square off bottom corners of header
+		U.new("Frame",{Size=UDim2.new(1,0,0,th.r.Offset),Position=UDim2.new(0,0,1,-th.r.Offset),
+			BackgroundColor3=th.secHdr,BorderSizePixel=0,ZIndex=9,Parent=hdr})
+		-- Separator under header
+		U.new("Frame",{Size=UDim2.new(1,0,0,1),Position=UDim2.new(0,0,1,0),
+			BackgroundColor3=th.border,BorderSizePixel=0,ZIndex=9,Parent=hdr})
+
+		local hx=sicon~="" and 26 or 8
+		if sicon~="" then
+			U.new("ImageLabel",{Size=UDim2.new(0,14,0,14),Position=UDim2.new(0,8,0.5,-7),
+				BackgroundTransparency=1,Image=sicon,ImageColor3=th.accent,ZIndex=10,Parent=hdr})
+		end
+		U.new("TextLabel",{Size=UDim2.new(1,-(hx+6),1,0),Position=UDim2.new(0,hx,0,0),
+			BackgroundTransparency=1,Text=sname,TextColor3=th.secTxt,
+			Font=th.fontB,TextSize=12,TextXAlignment=Enum.TextXAlignment.Left,ZIndex=10,Parent=hdr})
+
+		-- Inner element list (padded, inside box below header)
+		local inner=U.new("Frame",{Size=UDim2.new(1,0,0,0),Position=UDim2.new(0,0,0,28),
+			AutomaticSize=Enum.AutomaticSize.Y,BackgroundTransparency=1,ZIndex=8,Parent=box})
+		U.list(inner,nil,0)
+		U.pad(inner,8,10,10,10)
+
+		-- Each element row inside gets a bottom separator (KOD style)
+		local secObj={cont=inner,theme=th,lib=self.lib}
+		setmetatable(secObj,{__index=E})
+
+		-- Wrap element methods to add a separator line after each element
+		local function addEl(fn, o2)
+			local el=fn(secObj,o2)
+			-- Light separator between rows
+			local sep=U.new("Frame",{Size=UDim2.new(1,0,0,1),BackgroundColor3=th.border,
+				BorderSizePixel=0,ZIndex=9,Parent=inner})
+			return el
+		end
+
+		local sWrap={}
+		function sWrap:Toggle(o2)      return addEl(E.Toggle,o2) end
+		function sWrap:Slider(o2)      return addEl(E.Slider,o2) end
+		function sWrap:Button(o2)      return addEl(E.Button,o2) end
+		function sWrap:Textbox(o2)     return addEl(E.Textbox,o2) end
+		function sWrap:Keybind(o2)     return addEl(E.Keybind,o2) end
+		function sWrap:ColorPicker(o2) return addEl(E.ColorPicker,o2) end
+		function sWrap:Label(o2)       return addEl(E.Label,o2) end
+		function sWrap:Paragraph(o2)   return addEl(E.Paragraph,o2) end
+		function sWrap:Divider(o2)     secObj:Divider(o2) end
+
+		return sWrap
+	end
+
+	-- Direct element methods (added to full width, to left column by default)
+	local function mkECtx(targetCol)
+		local ctx={cont=targetCol,theme=th,lib=tabObj.lib}
+		setmetatable(ctx,{__index=E})
+		return ctx
+	end
+
+	function tabObj:Toggle(o)      return mkECtx(self.colL):Toggle(o) end
+	function tabObj:Slider(o)      return mkECtx(self.colL):Slider(o) end
+	function tabObj:Button(o)      return mkECtx(self.colL):Button(o) end
+	function tabObj:Textbox(o)     return mkECtx(self.colL):Textbox(o) end
+	function tabObj:Keybind(o)     return mkECtx(self.colL):Keybind(o) end
+	function tabObj:ColorPicker(o) return mkECtx(self.colL):ColorPicker(o) end
+	function tabObj:Label(o)       return mkECtx(self.colL):Label(o) end
+	function tabObj:Paragraph(o)   return mkECtx(self.colL):Paragraph(o) end
+	function tabObj:Divider(o)     mkECtx(self.colL):Divider(o) end
+
+	function tabObj:setEnabled(en)
+		tabObj.enabled=en
+		btn.BackgroundTransparency=en and 0 or 0.5
+		bLbl.TextTransparency=en and 0 or 0.5
+	end
+
+	table.insert(self.tabs,tabObj)
+	if first then
+		self.activeTab=tabObj
+		W:setTitle(name,sub)
+		task.defer(function()
+			local maxH=math.max(colL.AbsoluteSize.Y,colR.AbsoluteSize.Y)
+			W.cs.CanvasSize=UDim2.new(0,0,0,maxH+24+20)
+		end)
+	end
+	return tabObj
+end
+
+Library.CreateTab = Library.tab
+
+-- ── Tab select ────────────────────────────────────────────────────────────────
+function Library:_select(t)
+	local th=self.theme
+	local W=self.win; W.cs.CanvasPosition=Vector2.new(0,0)
+
+	for _,tab in ipairs(self.tabs) do
+		tab.cf.Visible=false
+		U.tw(tab.btn,U.F,{BackgroundColor3=th.tabI})
+		U.tw(tab.lbl,U.F,{TextColor3=th.tabTxtI})
+		local img=tab.btn:FindFirstChildOfClass("ImageLabel")
+		if img then U.tw(img,U.F,{ImageColor3=th.tabTxtI}) end
+	end
+	self.activeTab=t; t.cf.Visible=true
+	U.tw(t.btn,U.F,{BackgroundColor3=th.tabA})
+	U.tw(t.lbl,U.F,{TextColor3=th.tabTxt})
+	local img=t.btn:FindFirstChildOfClass("ImageLabel")
+	if img then U.tw(img,U.F,{ImageColor3=Color3.new(1,1,1)}) end
+
+	W:setTitle(t.name,t.sub or "")
+	task.defer(function()
+		local cL=t.colL; local cR=t.colR
+		local maxH=math.max(cL and cL.AbsoluteSize.Y or 0, cR and cR.AbsoluteSize.Y or 0)
+		W.cs.CanvasSize=UDim2.new(0,0,0,maxH+44)
+	end)
+end
+
+Library.SelectTab=function(self,t) self:_select(t) end
+
+-- ── Theme ─────────────────────────────────────────────────────────────────────
+function Library:setTheme(n)
+	if type(n)=="string" then self.themeName=n; self.theme=T.get(n)
+	else self.theme=T.merge(T.Blood,n); self.themeName="Custom" end
+end
+
+Library.SetTheme=Library.setTheme
+
+-- ── Notify ────────────────────────────────────────────────────────────────────
+function Library:Notify(o) return self.notif:push(o) end
+
+-- ── Config ────────────────────────────────────────────────────────────────────
+function Library:LoadConfig(s)
+	if s:find("://") then return self.cfgM:fromURL(s) end
+	return self.cfgM:fromJSON(s)
+end
+function Library:ExportConfig() return self.cfgM:export() end
+
+-- ── Settings ──────────────────────────────────────────────────────────────────
+function Library:SaveSetting(k,v) self.cfg[k]=v; U.save("BloodLib",k,v) end
+function Library:LoadSetting(k)
+	local v=U.load("BloodLib",k); if v~=nil then self.cfg[k]=v end; return v
+end
+
+-- ── Misc ──────────────────────────────────────────────────────────────────────
+function Library:SetScale(s) self.win.main.Size=UDim2.new(0,780*s,0,530*s) end
+function Library:SetVisible(v) self.win:setVisible(v) end
+function Library:Close() self.win:close() end
+
+function Library:CheckUpdate(url,cur)
+	local ok,raw=pcall(function() return HS:GetAsync(url) end); if not ok then return end
+	local ok2,d=pcall(function() return HS:JSONDecode(raw) end)
+	if ok2 and d.Version and d.Version>cur then
+		self:Notify({Title="Actualizacion disponible",Content="v"..d.Version.." lista",Type="Info",Duration=8})
+	end
+end
+
+return Library
